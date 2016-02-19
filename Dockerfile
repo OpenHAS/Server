@@ -2,18 +2,19 @@ FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get install wget curl build-essential libwrap0-dev libssl-dev python-distutils-extra libc-ares-dev uuid-dev supervisor -y
+RUN apt-get update && apt-get upgrade -y && apt-get install python-software-properties software-properties-common curl supervisor git-all -y
+
 
 #install mosquitto
-RUN mkdir -p /usr/local/src
-WORKDIR /usr/local/src
-RUN wget http://mosquitto.org/files/source/mosquitto-1.4.7.tar.gz
-RUN tar xvzf ./mosquitto-1.4.7.tar.gz
-WORKDIR /usr/local/src/mosquitto-1.4.7
-RUN make
-RUN make install
+RUN apt-add-repository ppa:mosquitto-dev/mosquitto-ppa && apt-get update && apt-get install mosquitto -y
+
+# RUN mkdir -p /usr/local/src
+# WORKDIR /usr/local/src
+# RUN curl -O http://mosquitto.org/files/source/mosquitto-1.4.7.tar.gz
+# RUN tar xvzf ./mosquitto-1.4.7.tar.gz
+# WORKDIR /usr/local/src/mosquitto-1.4.7
+# RUN make
+# RUN make install
 RUN adduser --system --disabled-password --disabled-login mosquitto
 EXPOSE 1883
 
@@ -57,7 +58,7 @@ RUN npm install
 
 #execute bower install to get UI side dependencies
 WORKDIR /usr/local/docker/app/public/template
-RUN bower install
+RUN bower --allow-root install
 
 #for nodejs app, we need to define the port
 ENV PORT=80
