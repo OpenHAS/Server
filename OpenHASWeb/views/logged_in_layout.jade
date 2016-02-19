@@ -1,0 +1,38 @@
+extends basic_layout
+
+block masterContent
+  div.wrapper
+    nav.navbar.navbar-default.navbar-static-top(role='navigation', style='margin-bottom: 0')
+      div.navbar-header
+        button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        a.navbar-brand(href='/') OpenHAS
+      ul.nav.navbar-top-links.navbar-right
+        li
+          a(href='/auth/logout')
+            i.fa.fa-sign-out.fa-fw
+            |  Logout
+      .navbar-default.sidebar(role='navigation')
+        .sidebar-nav.navbar-collapse
+          ul#side-menu.nav.in
+            li
+              a.active(href='/')
+                i.fa.fa-dashboard.fa-fw
+                |  Dashboard
+            li
+              a(href='/')
+                i.fa.fa-cubes.fa-fw
+                |  Nodes
+            li
+              a(href='/')
+                i.fa.fa-list.fa-fw
+                |  Rules
+            li
+              a(href='/')
+                i.fa.fa-cogs.fa-fw
+                |  Settings
+    #page-wrapper
+      block content

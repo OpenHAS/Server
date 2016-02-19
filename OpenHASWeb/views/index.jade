@@ -1,0 +1,54 @@
+extends logged_in_layout
+
+block content
+  .row
+    .col-lg-12
+      h1.page-header Dashboard
+    // /.col-lg-12
+  // /.row
+  .row
+    .col-lg-3.col-md-6
+      .panel.panel-green
+        .panel-heading
+          .row
+            .col-xs-3
+              i.fa.fa-tasks.fa-5x
+            .col-xs-9.text-right
+              .huge 26 °C
+              div Kitchen
+        a(href='#')
+          .panel-footer
+            span.pull-left View Details
+            span.pull-right
+              i.fa.fa-arrow-circle-right
+            .clearfix
+    .col-lg-3.col-md-6
+      .panel.panel-green
+        .panel-heading
+          .row
+            .col-xs-3
+              i.fa.fa-tasks.fa-5x
+            .col-xs-9.text-right
+              .huge 24 °C
+              div Living room
+        a(href='#')
+          .panel-footer
+            span.pull-left View Details
+            span.pull-right
+              i.fa.fa-arrow-circle-right
+            .clearfix
+    .col-lg-3.col-md-6
+      .panel.panel-yellow
+        .panel-heading
+          .row
+            .col-xs-3
+              i.fa.fa-bolt.fa-5x
+            .col-xs-9.text-right
+              .huge ON
+              div Heating
+        a(href='#')
+          .panel-footer
+            span.pull-left View Details
+            span.pull-right
+              i.fa.fa-arrow-circle-right
+            .clearfix
