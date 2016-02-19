@@ -38,7 +38,7 @@ EXPOSE 27017 28017
 RUN curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 RUN sudo apt-get install -y nodejs
 RUN sudo apt-get install -y build-essential
-RUN setcap cap_net_bind_service=+ep /usr/bin/nodejs
+RUN setcap cap_net_bind_service=+ep `readlink -f \`which node\``
 EXPOSE 80
 
 #install bower
