@@ -4,7 +4,7 @@ var auth = require('../business_logic/authentication_handler')
 
 /* GET home page. */
 router.get('/',auth.ensureAuthenticated ,function(req, res) {
-  res.render('index', { title: 'Express' });
+  res.render('index');
 });
 
 module.exports = router;

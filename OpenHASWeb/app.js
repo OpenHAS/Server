@@ -40,9 +40,11 @@ app.use(authProvider.session());
 
 var route_index = require('./routes/index')
 var route_auth = require('./routes/auth')
+var route_rules = require('./routes/rules')
 
 app.use('/', route_index)
 app.use('/auth', route_auth)
+app.use('/rules', route_rules)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
