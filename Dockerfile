@@ -8,13 +8,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install python-software-prop
 #install mosquitto
 RUN apt-add-repository ppa:mosquitto-dev/mosquitto-ppa && apt-get update && apt-get install mosquitto -y
 
-# RUN mkdir -p /usr/local/src
-# WORKDIR /usr/local/src
-# RUN curl -O http://mosquitto.org/files/source/mosquitto-1.4.7.tar.gz
-# RUN tar xvzf ./mosquitto-1.4.7.tar.gz
-# WORKDIR /usr/local/src/mosquitto-1.4.7
-# RUN make
-# RUN make install
 RUN adduser --system --disabled-password --disabled-login mosquitto
 EXPOSE 1883
 
@@ -38,8 +31,7 @@ EXPOSE 27017 28017
 RUN curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 RUN sudo apt-get install -y nodejs
 RUN sudo apt-get install -y build-essential
-RUN setcap cap_net_bind_service=+ep `readlink -f \`which node\``
-EXPOSE 80
+EXPOSE 3000
 
 #install bower
 RUN npm install bower -g
@@ -61,7 +53,7 @@ WORKDIR /usr/local/docker/app/public/template
 RUN bower --allow-root install
 
 #for nodejs app, we need to define the port
-ENV PORT=80
+ENV PORT=3000
 
 #start
 WORKDIR /usr/local/docker
