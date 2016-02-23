@@ -1,3 +1,4 @@
+var mongoose = require('mongoose')
 var Rule = require('./models/rule').Model
 var winston = require('winston')
 
@@ -48,6 +49,58 @@ RuleManager.prototype.setState = function(ruleId, state) {
       });
     } else {
       winston.error('Rule not found with id: %s', ruleId, err)
+    }
+  })
+}
+
+RuleManager.prototype.delete = function(ruleId, callback) {
+  winston.info('Deleting rule with id: %s', ruleId)
+
+  Rule.remove({_id:ruleId},function(err){
+    if (err) {
+      winston.error('Error deleting rule with id: %s', ruleId, err)
+      callback(false)
+    } else {
+      winston.info('Rule deleted with id: %s', ruleId)
+      callback(true)
+    }
+  })
+}
+
+RuleManager.prototype.findRuleWithId = function(ruleId, callback) {
+
+  Rule.findOne({_id:ruleId}, function(err, foundRule) {
+
+    if (foundRule) {
+      callback(foundRule)
+    } else {
+      winston.error('Rule not found with id: %s', ruleId, err)
+      callback(null)
+    }
+  })
+}
+
+RuleManager.prototype.copyRuleWithId = function(ruleId, callback) {
+  winston.info('Duplicating rule with id: %s', ruleId)
+  this.findRuleWithId(ruleId, function(rule){
+    if(rule){
+      var copy = new Rule(rule)
+
+      copy.ruleName = 'Copy of '+rule.ruleName
+      copy.isNew = true
+      copy._id = mongoose.Types.ObjectId()
+
+      copy.save(function(err, savedCopy){
+        if (err) {
+          winston.error('Error saving the copied instance of %s', ruleId, err)
+          callback(false)
+        } else {
+          winston.info('Copied instance with id: %s, new id: %s', ruleId, savedCopy._id)
+          callback(true)
+        }
+      })
+    } else {
+      callback(false)
     }
   })
 }

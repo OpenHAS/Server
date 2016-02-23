@@ -28,6 +28,19 @@ router.post('/new', auth.ensureAuthenticated, function(req, res) {
 
 router.post('/:ruleId/updateState', auth.ensureAuthenticated, function(req, res){
   ruleManager.setState(req.params.ruleId, req.body.state)
+  res.send(200)
+})
+
+router.get('/:ruleId/delete', auth.ensureAuthenticated, function (req, res) {
+  ruleManager.delete(req.params.ruleId,function(isSuccess){
+    res.redirect('/rules')
+  })
+})
+
+router.get('/:ruleId/copy', auth.ensureAuthenticated, function(req, res){
+  ruleManager.copyRuleWithId(req.params.ruleId, function(isSuccess){
+    res.redirect('/rules')
+  })
 })
 
 module.exports = router;

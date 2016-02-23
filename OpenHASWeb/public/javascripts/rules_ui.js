@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  var ruleEnabledSwitches = $('#ruleEnabled')
+  var ruleEnabledSwitches = $('.ruleEnabled')
 
   ruleEnabledSwitches.each(function(){
 
