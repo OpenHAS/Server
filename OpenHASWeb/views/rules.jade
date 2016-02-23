@@ -1,13 +1,36 @@
 extends logged_in_layout
 
+block header
+  link(href='/template/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css', rel='stylesheet')
+  script(src='/template/bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js')
+  script(src='/javascripts/rules_ui.js')
+
+
 block content
   .row
-    .col-lg-12
+    .col-md-12
       h1.page-header Rules
         .pull-right
           a.btn.btn-success(href='/rules/new') Add a new rule
   .row
-    .col-lg-10
-      | Name
-    .col-lg-2
-      | Enabled
+    .col-md-12
+      table.table
+        colgroup
+          col.col-md-1
+          col.col-md-10
+          col.col-md-1
+        thead
+          th Enabled
+          th Name
+          th Actions
+        tbody
+          for currentRule in rules
+            tr
+              td
+                input#ruleEnabled(name='#{currentRule._id}', type='checkbox',data-size='mini', data-on-color='success', onSwitchChange='this.onSwitchChanged', data-state='#{currentRule.enabled}')
+              td #{currentRule.ruleName}
+              td
+                a(href='#')
+                  i.fa.fa-trash.fa-fw
+                a(href='#')
+                  i.fa.fa-files-o.fa-fw

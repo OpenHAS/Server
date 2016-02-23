@@ -6,7 +6,7 @@ block content
       h1.page-header Create new rule
         .pull-right
           a.btn.btn-warning(href='/rules') Cancel
-  form.form-horizontal
+  form.form-horizontal(method='POST')
     .form-group
       label.col-sm-2.control-label Rule name
       .col-sm-6
@@ -14,13 +14,13 @@ block content
     .form-group
       label.col-sm-2.control-label Event source network
       .col-sm-6
-        select.form-control
+        select.form-control(name='sourceNetwork')
           option Server
           option XBee
     .form-group
       label.col-sm-2.control-label Condition
       .col-sm-6
-        textarea.form-control(rows='3')
+        textarea.form-control(rows='3', name='condition')
       .col-sm-2.text-center Insert a function
         select.form-control
           option getPacketParameter
@@ -29,7 +29,7 @@ block content
     .form-group
       label.col-sm-2.control-label Action
       .col-sm-6
-        textarea.form-control(rows='3')
+        textarea.form-control(rows='3', name='action')
       .col-sm-2.text-center Insert an action
         select.form-control
           option setVariable
