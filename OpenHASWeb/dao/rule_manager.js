@@ -5,12 +5,11 @@ var winston = require('winston')
 var RuleManager = function() {
 }
 
-RuleManager.prototype.addRule = function(ruleName, sourceNetwork, condition, action, callback) {
+RuleManager.prototype.addRule = function(ruleName, condition, action, callback) {
 
   var newRule = new Rule()
   newRule.enabled = true
   newRule.ruleName = ruleName
-  newRule.sourceNetwork = sourceNetwork
   newRule.conditions.push(condition)
   newRule.actions.push(action)
 
@@ -32,23 +31,36 @@ RuleManager.prototype.rules = function(callback) {
   })
 }
 
-RuleManager.prototype.setState = function(ruleId, state) {
+RuleManager.prototype.modify = function(ruleId, state, ruleName, condition, action, callback) {
   winston.info('Saving rule state to %s on %s',state, ruleId)
 
   Rule.findOne({_id:ruleId}, function(err, foundRule) {
 
     if (foundRule) {
       foundRule.enabled = state
+
+      if (ruleName && condition && action) {
+        foundRule.ruleName = ruleName
+        foundRule.conditions = [condition]
+        foundRule.actions = [action]
+      }
+
       foundRule.save(function (err) {
 
         if (err){
           winston.error('Error setting the new state on rule: %s', ruleId, err)
+          if (callback)
+            callback(false)
         } else {
           winston.info('Rule state updated. Id: %s', ruleId)
+          if (callback)
+            callback(true)
         }
       });
     } else {
       winston.error('Rule not found with id: %s', ruleId, err)
+      if (callback)
+        callback(false)
     }
   })
 }
@@ -104,5 +116,6 @@ RuleManager.prototype.copyRuleWithId = function(ruleId, callback) {
     }
   })
 }
+
 
 module.exports = new RuleManager()

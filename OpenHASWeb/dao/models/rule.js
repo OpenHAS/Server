@@ -4,7 +4,6 @@ var Schema = mongoose.Schema
 var Rule = new Schema({
   enabled : Boolean,
   ruleName : String,
-  sourceNetwork : String,
   conditions : [String],
   actions : [String]
 })

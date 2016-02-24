@@ -11,24 +11,30 @@ router.get('/', auth.ensureAuthenticated, function(req, res) {
 });
 
 router.get('/new', auth.ensureAuthenticated, function(req, res) {
-  res.render('rule_editor');
+
+  var vm = {}
+  vm.title = 'Create new rule'
+  vm.ruleName = ''
+  vm.condition = ''
+  vm.action = ''
+
+  res.render('rule_editor',{viewModel:vm});
 });
 
 router.post('/new', auth.ensureAuthenticated, function(req, res) {
 
   var ruleName = req.body.ruleName
-  var sourceNetwork = req.body.sourceNetwork
   var condition = req.body.condition
   var action = req.body.action
 
-  ruleManager.addRule(ruleName,sourceNetwork,condition,action, function(isSuccess){
+  ruleManager.addRule(ruleName,condition,action, function(isSuccess) {
     res.redirect('/rules')
   })
 })
 
-router.post('/:ruleId/updateState', auth.ensureAuthenticated, function(req, res){
-  ruleManager.setState(req.params.ruleId, req.body.state)
-  res.send(200)
+router.post('/:ruleId/updateState', auth.ensureAuthenticated, function(req, res) {
+  ruleManager.modify(req.params.ruleId, req.body.state)
+  res.sendStatus(200)
 })
 
 router.get('/:ruleId/delete', auth.ensureAuthenticated, function (req, res) {
@@ -37,10 +43,39 @@ router.get('/:ruleId/delete', auth.ensureAuthenticated, function (req, res) {
   })
 })
 
-router.get('/:ruleId/copy', auth.ensureAuthenticated, function(req, res){
+router.get('/:ruleId/copy', auth.ensureAuthenticated, function(req, res) {
   ruleManager.copyRuleWithId(req.params.ruleId, function(isSuccess){
     res.redirect('/rules')
   })
+})
+
+router.get('/:ruleId/edit', auth.ensureAuthenticated, function(req, res) {
+  ruleManager.findRuleWithId(req.params.ruleId, function(foundRule){
+    if (foundRule) {
+
+      var vm = {}
+      vm.title = 'Edit rule'
+      vm.ruleName = foundRule.ruleName
+      vm.condition = foundRule.conditions[0]
+      vm.action = foundRule.actions[0]
+
+      res.render('rule_editor',{viewModel:vm})
+    } else {
+      res.redirect('/rules')
+    }
+  })
+})
+
+router.post('/:ruleId/edit', auth.ensureAuthenticated, function(req, res) {
+
+  var ruleName = req.body.ruleName
+  var condition = req.body.condition
+  var action = req.body.action
+
+  ruleManager.modify(req.params.ruleId, req.body.state, ruleName, condition, action, function(isSuccess){
+    res.redirect('/rules')
+  })
+
 })
 
 module.exports = router;

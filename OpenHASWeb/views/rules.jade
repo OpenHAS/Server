@@ -28,7 +28,8 @@ block content
             tr
               td
                 input.ruleEnabled(name='#{currentRule._id}', type='checkbox',data-size='mini', data-on-color='success', onSwitchChange='this.onSwitchChanged', data-state='#{currentRule.enabled}')
-              td #{currentRule.ruleName}
+              td
+                a(href='/rules/#{currentRule._id}/edit') #{currentRule.ruleName}
               td
                 a(href='/rules/#{currentRule._id}/delete')
                   i.fa.fa-trash.fa-fw

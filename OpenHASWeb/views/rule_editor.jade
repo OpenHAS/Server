@@ -3,24 +3,19 @@ extends logged_in_layout
 block content
   .row
     .col-lg-12
-      h1.page-header Create new rule
+      h1.page-header #{viewModel.title}
         .pull-right
           a.btn.btn-warning(href='/rules') Cancel
   form.form-horizontal(method='POST')
     .form-group
       label.col-sm-2.control-label Rule name
       .col-sm-6
-        input.form-control(name='ruleName', type='text', placeholder='The name of the rule, any text will do')
-    .form-group
-      label.col-sm-2.control-label Event source network
-      .col-sm-6
-        select.form-control(name='sourceNetwork')
-          option Server
-          option XBee
+        input.form-control(name='ruleName', type='text', placeholder='The name of the rule, any text will do', value='#{viewModel.ruleName}')
     .form-group
       label.col-sm-2.control-label Condition
       .col-sm-6
         textarea.form-control(rows='3', name='condition')
+          |#{viewModel.condition}
       .col-sm-2.text-center Insert a function
         select.form-control
           option getPacketParameter
@@ -30,6 +25,7 @@ block content
       label.col-sm-2.control-label Action
       .col-sm-6
         textarea.form-control(rows='3', name='action')
+          |#{viewModel.action}
       .col-sm-2.text-center Insert an action
         select.form-control
           option setVariable
