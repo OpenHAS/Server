@@ -36,8 +36,16 @@ EXPOSE 3000
 #install bower
 RUN npm install bower -g
 
+#install redis
+RUN mkdir -p /usr/local/docker/redis
+WORKDIR /usr/local/docker/redis
+RUN curl -O http://download.redis.io/redis-stable.tar.gz
+RUN tar xvzf redis-stable.tar.gz
+WORKDIR /usr/local/docker/redis/redis-stable
+RUN make
+RUN make install 
+
 #install the application and the startup scripts
-RUN mkdir -p /usr/local/docker
 WORKDIR /usr/local/docker
 ADD Docker/scripts ./scripts
 ADD OpenHASWeb ./app

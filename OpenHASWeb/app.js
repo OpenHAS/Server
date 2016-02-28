@@ -17,6 +17,7 @@ db.once('open', function() {
 });
 
 var authProvider = require('./business_logic/authentication_handler')
+var messageProcessor = require('./business_logic/message_processor')
 
 var app = express();
 
