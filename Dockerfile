@@ -42,6 +42,10 @@ WORKDIR /usr/local/docker
 ADD Docker/scripts ./scripts
 ADD OpenHASWeb ./app
 ADD Docker/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD Docker/config/mosquitto.conf /etc/mosquitto/conf.d/mosquitto.conf
+ADD Docker/config/mosquitto_password_file /etc/mosquitto/password_file
+RUN mosquitto_passwd -D /etc/mosquitto/password_file testuser
+RUN mosquitto_passwd -b /etc/mosquitto/password_file testuser test_pass-word_test
 RUN adduser --system --disabled-password --disabled-login nodejs
 
 #execute npm install to prepare the app
@@ -54,6 +58,8 @@ RUN bower --allow-root install
 
 #for nodejs app, we need to define the port
 ENV PORT=3000
+
+EXPOSE 1883	
 
 #start
 WORKDIR /usr/local/docker
