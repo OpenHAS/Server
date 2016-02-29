@@ -1,0 +1,33 @@
+extends logged_in_layout
+block content
+  .row
+    .col-lg-12
+      h1.page-header #{viewModel.title}
+        .pull-right
+          a.btn.btn-warning(href='/nodes') Cancel
+
+  form.form-horizontal(method='POST')
+    .form-group
+      label.col-sm-2.control-label Node name
+      .col-sm-6
+        input.form-control(name='nodeName', type='text', placeholder='The name of the node which will be visible on the widget. Like Kitchen', value='#{viewModel.nodeName}')
+    .form-group
+      label.col-sm-2.control-label Node address
+      .col-sm-6
+        input.form-control(name='nodeAddress', type='text', placeholder='The address of the node in the following format: xbee:AABBCCDDEEFF', value='#{viewModel.nodeAddress}')
+    .form-group
+      label.col-sm-2.control-label Displayed parameter index
+      .col-sm-6
+        input.form-control(name='parameterIndex', type='number', placeholder='The index of the parameter to display, like 1', value='#{viewModel.parameterIndex}')
+    .form-group
+      label.col-sm-2.control-label Measurement unit
+      .col-sm-6
+        input.form-control(name='measurementUnit', type='text', placeholder='The measurement unit of the displayed parameter, like °C', value='#{viewModel.measurementUnit}')
+    .form-group
+      label.col-sm-2.control-label Refresh rate (seconds)
+      .col-sm-6
+        input.form-control(name='refreshRate', type='number', min='5', placeholder='How often the widget should be refreshed, in seconds. Minimum 5 seconds', value='#{viewModel.refreshRate}')
+
+    .form-group
+      .col-sm-offset-2.col-sm-10
+        button.btn.btn-primary(type='submit') Save

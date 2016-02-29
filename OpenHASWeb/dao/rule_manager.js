@@ -5,6 +5,12 @@ var winston = require('winston')
 var RuleManager = function() {
 }
 
+RuleManager.prototype.rules = function(callback) {
+  Rule.find(function(err, rules){
+    callback(rules)
+  })
+}
+
 RuleManager.prototype.addRule = function(ruleName, condition, action, callback) {
 
   var newRule = new Rule()
@@ -22,12 +28,6 @@ RuleManager.prototype.addRule = function(ruleName, condition, action, callback) 
       winston.info('New rule saved with id: %s',savedRule._id)
       callback(true)
     }
-  })
-}
-
-RuleManager.prototype.rules = function(callback) {
-  Rule.find(function(err, rules){
-    callback(rules)
   })
 }
 
@@ -116,6 +116,5 @@ RuleManager.prototype.copyRuleWithId = function(ruleId, callback) {
     }
   })
 }
-
 
 module.exports = new RuleManager()
