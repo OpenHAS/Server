@@ -16,7 +16,7 @@ router.get('/new', auth.ensureAuthenticated, function(req, res) {
   vm.nodeName = ''
   vm.nodeAddress = ''
   vm.parameterIndex = '1'
-  vm.measurementUnit = ''
+  vm.measurementUnit = '°C'
   vm.refreshRate = '10'
 
   res.render('node_editor',{viewModel:vm});
@@ -32,6 +32,45 @@ router.post('/new', auth.ensureAuthenticated, function(req, res) {
   nodeObject.refreshRate = req.body.refreshRate
 
   nodeManager.addNode(nodeObject, function() {
+    res.redirect('/nodes')
+  })
+})
+
+router.get('/:nodeId/edit', auth.ensureAuthenticated, function(req, res) {
+  nodeManager.findNodeWithId(req.params.nodeId, function(foundNode){
+    if (foundNode) {
+
+      var vm = {}
+      vm.title = 'Edit node'
+      vm.nodeName = foundNode.nodeName
+      vm.nodeAddress = foundNode.address
+      vm.parameterIndex = foundNode.parameterIndex
+      vm.measurementUnit = foundNode.measurementUnit
+      vm.refreshRate = foundNode.refreshRate
+
+      res.render('node_editor',{viewModel:vm})
+    } else {
+      res.redirect('/nodes')
+    }
+  })
+})
+
+router.post('/:nodeId/edit', auth.ensureAuthenticated, function(req, res) {
+
+  var nodeObject = {}
+  nodeObject.nodeName = req.body.nodeName
+  nodeObject.nodeAddress = req.body.nodeAddress
+  nodeObject.parameterIndex = req.body.parameterIndex
+  nodeObject.measurementUnit = req.body.measurementUnit
+  nodeObject.refreshRate = req.body.refreshRate
+
+  nodeManager.modify(req.params.nodeId, nodeObject, function() {
+    res.redirect('/nodes')
+  })
+})
+
+router.get('/:nodeId/delete', auth.ensureAuthenticated, function (req, res) {
+  nodeManager.delete(req.params.nodeId,function(isSuccess){
     res.redirect('/nodes')
   })
 })

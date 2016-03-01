@@ -26,7 +26,8 @@ block content
               span.pull-right
                 i.fa.fa-arrow-circle-right.fa-fw
             .clearfix
-            span.pull-left Delete
-            span.pull-right
-              i.fa.fa-trash.fa-fw
+            a(href='/nodes/#{currentNode._id}/delete')
+              span.pull-left Delete
+              span.pull-right
+                i.fa.fa-trash.fa-fw
             .clearfix

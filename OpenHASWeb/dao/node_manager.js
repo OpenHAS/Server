@@ -33,7 +33,7 @@ NodeManager.prototype.addNode = function(nodeObject, callback) {
 }
 
 NodeManager.prototype.modify = function(nodeId, nodeObject, callback) {
-  winston.info('Saving node state to %s on %s',state, nodeId)
+  winston.info('Saving node %s', nodeId)
 
   Node.findOne({_id:nodeId}, function(err, foundNode) {
 
