@@ -1,5 +1,6 @@
 var mongoose = require('mongoose')
 var Node = require('./models/node').Model
+var Event = require('./models/event').Model
 var winston = require('winston')
 
 
@@ -113,6 +114,27 @@ NodeManager.prototype.copyNodeWithId = function(nodeId, callback) {
       })
     } else {
       callback(false)
+    }
+  })
+}
+
+NodeManager.prototype.lastValues = function(nodeId, callback) {
+
+  this.findNodeWithId(nodeId, function (node) {
+
+    if (node) {
+
+      Event.find({source: node.address}).sort({timestamp: 'desc'}).exec(function (err, events) {
+
+        if (events.length > 0) {
+          callback(node, events[0])
+        } else {
+          callback(node, null)
+        }
+      })
+    }
+    else {
+      callback(null)
     }
   })
 }

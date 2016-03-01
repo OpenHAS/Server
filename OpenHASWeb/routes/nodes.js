@@ -75,5 +75,22 @@ router.get('/:nodeId/delete', auth.ensureAuthenticated, function (req, res) {
   })
 })
 
+router.get('/:nodeId/value', auth.ensureAuthenticated, function(req, res) {
+  nodeManager.lastValues(req.params.nodeId, function(node, lastEvent) {
+    if (lastEvent) {
+      var index = node.parameterIndex
+
+      var vm = {}
+      vm.nodeId = node._id
+      vm.value = lastEvent.parameters[index]
+      vm.timestamp = lastEvent.timestamp
+
+      res.send({result:vm})
+    } else {
+      res.send({result:null})
+    }
+  })
+})
+
 
 module.exports = router
