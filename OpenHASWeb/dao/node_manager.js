@@ -12,6 +12,12 @@ NodeManager.prototype.nodes = function(callback) {
   })
 }
 
+NodeManager.prototype.favouriteNodes = function(callback) {
+  Node.find({favourite:true}, function(err, nodes){
+    callback(nodes)
+  })
+}
+
 NodeManager.prototype.addNode = function(nodeObject, callback) {
 
   var newNode = new Node()
@@ -45,6 +51,7 @@ NodeManager.prototype.modify = function(nodeId, nodeObject, callback) {
       foundNode.parameterIndex = nodeObject.parameterIndex
       foundNode.measurementUnit = nodeObject.measurementUnit
       foundNode.refreshRate = nodeObject.refreshRate
+      foundNode.favourite = nodeObject.favourite
 
       foundNode.save(function (err) {
 
@@ -138,5 +145,7 @@ NodeManager.prototype.lastValues = function(nodeId, callback) {
     }
   })
 }
+
+
 
 module.exports = new NodeManager()

@@ -15,9 +15,10 @@ router.get('/new', auth.ensureAuthenticated, function(req, res) {
   vm.title = 'Create new node'
   vm.nodeName = ''
   vm.nodeAddress = ''
-  vm.parameterIndex = '1'
+  vm.parameterIndex = '0'
   vm.measurementUnit = '°C'
   vm.refreshRate = '10'
+  vm.favourite = true
 
   res.render('node_editor',{viewModel:vm});
 });
@@ -46,6 +47,7 @@ router.get('/:nodeId/edit', auth.ensureAuthenticated, function(req, res) {
       vm.nodeAddress = foundNode.address
       vm.parameterIndex = foundNode.parameterIndex
       vm.measurementUnit = foundNode.measurementUnit
+      vm.favourite = foundNode.favourite
       vm.refreshRate = foundNode.refreshRate
 
       res.render('node_editor',{viewModel:vm})
@@ -63,6 +65,7 @@ router.post('/:nodeId/edit', auth.ensureAuthenticated, function(req, res) {
   nodeObject.parameterIndex = req.body.parameterIndex
   nodeObject.measurementUnit = req.body.measurementUnit
   nodeObject.refreshRate = req.body.refreshRate
+  nodeObject.favourite = req.body.favourite == 'on'
 
   nodeManager.modify(req.params.nodeId, nodeObject, function() {
     res.redirect('/nodes')

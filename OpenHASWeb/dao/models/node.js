@@ -6,7 +6,8 @@ var Node = new Schema({
   nodeName : String,
   parameterIndex : Number,
   measurementUnit : String,
-  refreshRate : Number
+  refreshRate : Number,
+  favourite : Boolean
 })
 
 var NodeModel = mongoose.model('Node', Node);
