@@ -8,22 +8,6 @@ block content
       h1.page-header Dashboard
 
   .row
-    for currentNode in nodes
-      .col-lg-3.col-md-6
-        .panel.panel-green.nodeElement(data-nodeId='#{currentNode._id}', data-refreshRate='#{currentNode.refreshRate}')
-          .panel-heading
-            .row
-              .col-xs-3
-                i.fa.fa-tasks.fa-5x
-              .col-xs-9.text-right
-                .huge
-                  span(id='#{currentNode._id}') --
-                  |  #{currentNode.measurementUnit}
-                div #{currentNode.nodeName}
-          a(href='#')
-            .panel-footer
-              span.pull-left View Details
-              span.pull-right
-                i.fa.fa-arrow-circle-right
-              .clearfix
+    for currentNode in viewModel.nodes
+      include includes/node/node_main
 

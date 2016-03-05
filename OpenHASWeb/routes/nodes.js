@@ -5,7 +5,10 @@ var nodeManager = require('../dao/node_manager')
 
 router.get('/', auth.ensureAuthenticated, function(req, res) {
   nodeManager.nodes(function(nodes){
-    res.render('nodes', {nodes:nodes});
+    var vm = {}
+    vm.nodes = nodes
+    vm.editMode = true
+    res.render('nodes', {viewModel:vm});
   })
 });
 
@@ -19,6 +22,7 @@ router.get('/new', auth.ensureAuthenticated, function(req, res) {
   vm.measurementUnit = '°C'
   vm.refreshRate = '10'
   vm.favourite = true
+  vm.nodeType = 'Sensor'
 
   res.render('node_editor',{viewModel:vm});
 });
@@ -31,6 +35,7 @@ router.post('/new', auth.ensureAuthenticated, function(req, res) {
   nodeObject.parameterIndex = req.body.parameterIndex
   nodeObject.measurementUnit = req.body.measurementUnit
   nodeObject.refreshRate = req.body.refreshRate
+  nodeObject.nodeType = req.body.nodeType
 
   nodeManager.addNode(nodeObject, function() {
     res.redirect('/nodes')
@@ -49,6 +54,7 @@ router.get('/:nodeId/edit', auth.ensureAuthenticated, function(req, res) {
       vm.measurementUnit = foundNode.measurementUnit
       vm.favourite = foundNode.favourite
       vm.refreshRate = foundNode.refreshRate
+      vm.nodeType = foundNode.nodeType
 
       res.render('node_editor',{viewModel:vm})
     } else {
@@ -66,6 +72,7 @@ router.post('/:nodeId/edit', auth.ensureAuthenticated, function(req, res) {
   nodeObject.measurementUnit = req.body.measurementUnit
   nodeObject.refreshRate = req.body.refreshRate
   nodeObject.favourite = req.body.favourite == 'on'
+  nodeObject.nodeType = req.body.nodeType
 
   nodeManager.modify(req.params.nodeId, nodeObject, function() {
     res.redirect('/nodes')
@@ -93,6 +100,12 @@ router.get('/:nodeId/value', auth.ensureAuthenticated, function(req, res) {
       res.send({result:null})
     }
   })
+})
+
+router.post('/:nodeId/setOutputState', auth.ensureAuthenticated, function(req,res) {
+
+  var message = 'SetRelay,0,'+req.body.state
+  nodeManager.sendMessageToNode(req.params.nodeId,message)
 })
 
 

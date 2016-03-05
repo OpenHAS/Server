@@ -7,7 +7,8 @@ var Node = new Schema({
   parameterIndex : Number,
   measurementUnit : String,
   refreshRate : Number,
-  favourite : Boolean
+  favourite : Boolean,
+  nodeType : { type: String, default: 'Sensor' }
 })
 
 var NodeModel = mongoose.model('Node', Node);

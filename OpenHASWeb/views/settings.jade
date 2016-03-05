@@ -1,0 +1,51 @@
+extends logged_in_layout
+
+block content
+  .row
+    .col-lg-12
+      h1.page-header Settings
+  form.form-horizontal(method='POST')
+    .col-sm-4
+      span.help-block In this section you can set the username and the password on the MQTT broker. Clients have to use this username and password to connect to the broker.
+    .row
+
+    .form-group
+      label.col-sm-3.control-label MQTT username
+      .col-sm-6
+        input.form-control(name='mqtt_username', type='text', value='#{viewModel.mqtt_username}')
+
+    .form-group
+      label.col-sm-3.control-label MQTT password
+      .col-sm-6
+        input.form-control(name='mqtt_password', type='password', value='#{viewModel.mqtt_password}')
+
+    .form-group
+      .col-sm-offset-3.col-sm-10
+        button.btn.btn-primary(type='submit') Save MQTT settings
+
+  form.form-horizontal(method='POST')
+
+    .col-sm-4
+      span.help-block Here you can set the username and password which can be used to access the web interface. You can also let users to see the dashboard without authentication.
+    .row
+
+    .form-group
+      label.col-sm-3.control-label Web user
+      .col-sm-6
+        input.form-control(name='web_username', type='text', value='#{viewModel.web_username}')
+
+    .form-group
+      label.col-sm-3.control-label Web password
+      .col-sm-6
+        input.form-control(name='web_password', type='password', value='#{viewModel.web_password}')
+
+    .form-group
+      label.col-sm-3.control-label Anonymous dashboard access
+      .col-sm-6
+        input(name='anonymous_dashboard', type='checkbox')
+
+    .form-group
+      .col-sm-offset-3.col-sm-10
+        button.btn.btn-primary(type='submit') Save web settings
+
+

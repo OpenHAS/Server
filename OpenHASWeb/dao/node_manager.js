@@ -1,7 +1,9 @@
 var mongoose = require('mongoose')
+var winston = require('winston')
 var Node = require('./models/node').Model
 var Event = require('./models/event').Model
-var winston = require('winston')
+
+var MessageProcessor = require('../business_logic/message_processor')
 
 
 var NodeManager = function(){}
@@ -26,6 +28,7 @@ NodeManager.prototype.addNode = function(nodeObject, callback) {
   newNode.parameterIndex = nodeObject.parameterIndex
   newNode.measurementUnit = nodeObject.measurementUnit
   newNode.refreshRate = nodeObject.refreshRate
+  newNode.nodeType = nodeObject.nodeType
 
   newNode.save(function(err, savedNode){
 
@@ -52,6 +55,7 @@ NodeManager.prototype.modify = function(nodeId, nodeObject, callback) {
       foundNode.measurementUnit = nodeObject.measurementUnit
       foundNode.refreshRate = nodeObject.refreshRate
       foundNode.favourite = nodeObject.favourite
+      foundNode.nodeType = nodeObject.nodeType
 
       foundNode.save(function (err) {
 
@@ -142,6 +146,20 @@ NodeManager.prototype.lastValues = function(nodeId, callback) {
     }
     else {
       callback(null)
+    }
+  })
+}
+
+NodeManager.prototype.sendMessageToNode = function(nodeId, message, callback) {
+  this.findNodeWithId(nodeId, function(node){
+    if (node) {
+
+      var command = node.nodeAddress + ','+ message
+
+      MessageProcessor.sendCommand(message)
+
+    } else {
+      callback(false)
     }
   })
 }

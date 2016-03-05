@@ -8,26 +8,5 @@ block content
         .pull-right
           a.btn.btn-success(href='/nodes/new') Add a new node
   .row
-    for currentNode in nodes
-      .col-lg-3.col-md-6
-        .panel.panel-green.nodeElement(data-nodeId='#{currentNode._id}', data-refreshRate='#{currentNode.refreshRate}')
-          .panel-heading
-            .row
-              .col-xs-3
-                i.fa.fa-tasks.fa-5x
-              .col-xs-9.text-right
-                .huge
-                  span(id='#{currentNode._id}') --
-                  |  #{currentNode.measurementUnit}
-                div #{currentNode.nodeName}
-          .panel-footer
-            a(href='/nodes/#{currentNode._id}/edit')
-              span.pull-left Edit
-              span.pull-right
-                i.fa.fa-arrow-circle-right.fa-fw
-            .clearfix
-            a(href='/nodes/#{currentNode._id}/delete')
-              span.pull-left Delete
-              span.pull-right
-                i.fa.fa-trash.fa-fw
-            .clearfix
+    for currentNode in viewModel.nodes
+      include includes/node/node_main

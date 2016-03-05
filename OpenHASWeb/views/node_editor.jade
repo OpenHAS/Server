@@ -1,7 +1,5 @@
 extends logged_in_layout
 block header
-  link(href='/template/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css', rel='stylesheet')
-  script(src='/template/bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js')
   script(src='/javascripts/node_editor_ui.js')
 block content
   .row
@@ -11,6 +9,12 @@ block content
           a.btn.btn-warning(href='/nodes') Cancel
 
   form.form-horizontal(method='POST')
+    .form-group
+      label.col-sm-3.control-label Node type
+      .col-sm-6
+        select.form-control(name='nodeType', data-value='#{viewModel.nodeType}')
+          option Sensor
+          option Actuator
     .form-group
       label.col-sm-3.control-label Node name
       .col-sm-6

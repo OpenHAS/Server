@@ -10,7 +10,10 @@ router.get('/',auth.ensureAuthenticated ,function(req, res) {
 
 router.get('/dashboard', auth.ensureAuthenticated, function(req, res) {
   nodeManager.favouriteNodes(function(nodes){
-    res.render('index',{nodes:nodes});
+    var vm = {}
+    vm.nodes = nodes
+    vm.editMode = false
+    res.render('index',{viewModel:vm});
   })
 })
 

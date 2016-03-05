@@ -4,6 +4,7 @@ var winston = require('winston')
 var EventManager = require('../dao/event_manager')
 
 var statusUpdateTopic = '/Status/generic'
+var commandTopic = '/Command'
 
 var MessageProcessor = function(){
   this.client = mqtt.connect(config.mqtt.host,{username:config.mqtt.username,password:config.mqtt.password})
@@ -32,6 +33,12 @@ MessageProcessor.prototype.processMessage = function(topic, message) {
   if (topic.endsWith(statusUpdateTopic)) {
     MessageProcessor.prototype.processStatusMessage.call(module.exports,message)
   }
+}
+
+MessageProcessor.prototype.sendCommand = function(command){
+  winston.info('Sending MQTT message: %s',command)
+
+  this.client.publish(config.mqtt.rootTopic+commandTopic, command)
 }
 
 
