@@ -4,6 +4,8 @@ var Node = require('./models/node').Model
 var Event = require('./models/event').Model
 
 var MessageProcessor = require('../business_logic/message_processor')
+var NodeTypes = require('../business_logic/node_types')
+
 
 
 var NodeManager = function(){}
@@ -25,10 +27,10 @@ NodeManager.prototype.addNode = function(nodeObject, callback) {
   var newNode = new Node()
   newNode.nodeName = nodeObject.nodeName
   newNode.address = nodeObject.nodeAddress
-  newNode.parameterIndex = nodeObject.parameterIndex
-  newNode.measurementUnit = nodeObject.measurementUnit
-  newNode.refreshRate = nodeObject.refreshRate
+  newNode.favourite = nodeObject.favourite
   newNode.nodeType = nodeObject.nodeType
+  newNode.getterFunction = nodeObject.getterFunction
+  newNode.setterFunction = nodeObject.setterFunction
 
   newNode.save(function(err, savedNode){
 
@@ -51,11 +53,10 @@ NodeManager.prototype.modify = function(nodeId, nodeObject, callback) {
 
       foundNode.nodeName = nodeObject.nodeName
       foundNode.address = nodeObject.nodeAddress
-      foundNode.parameterIndex = nodeObject.parameterIndex
-      foundNode.measurementUnit = nodeObject.measurementUnit
-      foundNode.refreshRate = nodeObject.refreshRate
       foundNode.favourite = nodeObject.favourite
       foundNode.nodeType = nodeObject.nodeType
+      foundNode.getterFunction = nodeObject.getterFunction
+      foundNode.setterFunction = nodeObject.setterFunction
 
       foundNode.save(function (err) {
 
@@ -104,38 +105,13 @@ NodeManager.prototype.findNodeWithId = function(nodeId, callback) {
   })
 }
 
-NodeManager.prototype.copyNodeWithId = function(nodeId, callback) {
-  winston.info('Duplicating node with id: %s', nodeId)
-  this.findNodeWithId(nodeId, function(node){
-    if(node){
-      var copy = new Node(node)
-
-      copy.nodeName = 'Copy of '+node.nodeName
-      copy.isNew = true
-      copy._id = mongoose.Types.ObjectId()
-
-      copy.save(function(err, savedCopy){
-        if (err) {
-          winston.error('Error saving the copied instance of node %s', nodeId, err)
-          callback(false)
-        } else {
-          winston.info('Copied node with id: %s, new id: %s', nodeId, savedCopy._id.toString())
-          callback(true)
-        }
-      })
-    } else {
-      callback(false)
-    }
-  })
-}
-
 NodeManager.prototype.lastValues = function(nodeId, callback) {
 
   this.findNodeWithId(nodeId, function (node) {
 
     if (node) {
 
-      Event.find({source: node.address}).sort({timestamp: 'desc'}).exec(function (err, events) {
+      Event.find({source: node.address}).sort({timestamp: 'desc'}).limit(1).exec(function (err, events) {
 
         if (events.length > 0) {
           callback(node, events[0])
@@ -150,16 +126,16 @@ NodeManager.prototype.lastValues = function(nodeId, callback) {
   })
 }
 
-NodeManager.prototype.sendMessageToNode = function(nodeId, message, callback) {
+NodeManager.prototype.setValue = function(nodeId, value) {
   this.findNodeWithId(nodeId, function(node){
     if (node) {
 
-      var command = node.nodeAddress + ','+ message
+      var currentNodeType = NodeTypes.filter(function(element){return element.name==node.nodeType})[0]
+      var result = currentNodeType[node.setterFunction](value)
 
-      MessageProcessor.sendCommand(message)
+      var command = node.address.replace(':',',') + ','+ result
 
-    } else {
-      callback(false)
+      MessageProcessor.sendCommand(command)
     }
   })
 }

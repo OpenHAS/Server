@@ -8,13 +8,12 @@ EventManager.prototype.parseEvent = function(eventAsString) {
 
   var elements = eventAsString.split(',')
   var newEvent = null
-  if (elements.length >= 4) {
+  if (elements.length >= 3) {
     newEvent = new Event()
     newEvent.source = elements[0] + ':' + elements[1]
-    newEvent.type = elements[2]
     newEvent.timestamp = new Date()
 
-    for (var i = 3; i < elements.length; i++) {
+    for (var i = 2; i < elements.length; i++) {
       var current = elements[i];
       newEvent.parameters.push(current)
     }

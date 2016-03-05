@@ -1,7 +1,7 @@
 case currentNode.nodeType
-  when 'Sensor'
+  when 'OHTemperatureSensor'
     include node_main_input
-  when 'Actuator'
+  when 'OHDoubleRelayActuator'
     include node_main_output
   default
     .col-lg-3.col-md-6

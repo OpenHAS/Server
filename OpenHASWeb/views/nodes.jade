@@ -1,5 +1,7 @@
 extends logged_in_layout
 block header
+  script(type='text/javascript').
+    var viewModel = !{JSON.stringify(viewModel)};
   script(src='/javascripts/nodes_ui.js')
 block content
   .row

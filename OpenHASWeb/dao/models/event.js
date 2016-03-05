@@ -4,7 +4,6 @@ var Schema = mongoose.Schema
 var Event = new Schema({
   timestamp : Date,
   source : String,
-  type : String,
   parameters : [String]
 
 })

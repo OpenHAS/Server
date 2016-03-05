@@ -4,11 +4,10 @@ var Schema = mongoose.Schema
 var Node = new Schema({
   address : String,
   nodeName : String,
-  parameterIndex : Number,
-  measurementUnit : String,
-  refreshRate : Number,
   favourite : Boolean,
-  nodeType : { type: String, default: 'Sensor' }
+  nodeType : String,
+  getterFunction : String,
+  setterFunction : String
 })
 
 var NodeModel = mongoose.model('Node', Node);

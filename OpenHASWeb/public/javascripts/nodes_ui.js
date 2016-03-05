@@ -1,19 +1,15 @@
 $(document).ready(function(){
-  var nodePanels = $('.nodeElement')
 
-  nodePanels.each(function(){
-
-    //get the variables
-    var nodePanel = $(this)
-    var refreshRate = nodePanel.attr('data-refreshRate')
-    var nodeId = nodePanel.attr('data-nodeId')
-
-    //register a timer for every node
-    setInterval(fetchValue, refreshRate * 1000, nodeId)
-
-    //do an immediate fetch
-    fetchValue(nodeId)
+  //create an array from node ids
+  var nodeIDs = viewModel.nodes.map(function(currentNode){
+    return currentNode._id.toString()
   })
+
+  //register a timer for every node
+  setInterval(fetchValues, 10*1000, nodeIDs)
+
+  //do an immediate fetch
+  fetchValues(nodeIDs)
 
   //also need to find switches
   var outputSwitches = $('.actuatorSwitch')
@@ -26,11 +22,19 @@ $(document).ready(function(){
    //sw.bootstrapSwitch('state',isEnabled,isEnabled)
 
     sw.on('switchChange.bootstrapSwitch', function(event, state) {
-      var url = '/nodes/'+sw.attr('name')+'/setOutputState'
-      $.post(url,{'state':state})
+      var url = '/nodes/'+sw.attr('name')+'/setValue'
+      var v = Number(state)
+      $.post(url,{'value':v})
     });
   })
 })
+
+var fetchValues = function(nodeIds) {
+
+  nodeIds.forEach(function(currentNodeId){
+    fetchValue(currentNodeId)
+  })
+}
 
 var fetchValue = function(nodeId) {
   console.log('get data for '+nodeId)
@@ -45,7 +49,7 @@ var fetchValue = function(nodeId) {
 
     var selectorString = "input[name='"+ nodeId +"']"
     var switchValue = data.result.value == "1"
-    $(selectorString).bootstrapSwitch('state',switchValue)
+    $(selectorString).bootstrapSwitch('state',switchValue, true)
 
     $(selectorString).attr('title', data.result.timestamp)
   })
