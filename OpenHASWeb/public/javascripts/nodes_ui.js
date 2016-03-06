@@ -8,9 +8,6 @@ $(document).ready(function(){
   //register a timer for every node
   setInterval(fetchValues, 10*1000, nodeIDs)
 
-  //do an immediate fetch
-  fetchValues(nodeIDs)
-
   //also need to find switches
   var outputSwitches = $('.actuatorSwitch')
 
@@ -18,15 +15,23 @@ $(document).ready(function(){
 
     var sw = $(this)
     var isEnabled = Boolean(sw.data('state'))
+    sw.attr('data-lastchange','2000.01.01 00:00:00')
 
    //sw.bootstrapSwitch('state',isEnabled,isEnabled)
 
     sw.on('switchChange.bootstrapSwitch', function(event, state) {
       var url = '/nodes/'+sw.attr('name')+'/setValue'
       var v = Number(state)
+
+      //save the last change date
+      sw.attr('data-lastchange', new Date())
+
       $.post(url,{'value':v})
     });
   })
+
+  //do an immediate fetch
+  fetchValues(nodeIDs)
 })
 
 var fetchValues = function(nodeIds) {
@@ -49,7 +54,18 @@ var fetchValue = function(nodeId) {
 
     var selectorString = "input[name='"+ nodeId +"']"
     var switchValue = data.result.value == "1"
-    $(selectorString).bootstrapSwitch('state',switchValue, true)
+    var sw = $(selectorString)
+
+    var lastChangeDate = new Date(sw.attr('data-lastchange'))
+    var receivedDataTimestamp = new Date(data.result.timestamp)
+
+    var deltaMilis = receivedDataTimestamp.getTime()-lastChangeDate.getTime()
+    console.log('Delta: %d', deltaMilis)
+    if (deltaMilis > 5000) {
+      sw.bootstrapSwitch('state',switchValue, true)
+    } else {
+      console.log('Not changing switch, reveived data is older than change')
+    }
 
     $(selectorString).attr('title', data.result.timestamp)
   })
