@@ -11,13 +11,14 @@ RuleManager.prototype.rules = function(callback) {
   })
 }
 
-RuleManager.prototype.addRule = function(ruleName, condition, action, callback) {
+RuleManager.prototype.addRule = function(ruleName, condition, action, negativeAction, callback) {
 
   var newRule = new Rule()
   newRule.ruleEnabled = true
   newRule.ruleName = ruleName
   newRule.conditions.push(condition)
   newRule.actions.push(action)
+  newRule.negativeActions.push(negativeAction)
 
   newRule.save(function(err, savedRule){
 
@@ -31,18 +32,22 @@ RuleManager.prototype.addRule = function(ruleName, condition, action, callback) 
   })
 }
 
-RuleManager.prototype.modify = function(ruleId, state, ruleName, condition, action, callback) {
+RuleManager.prototype.modify = function(ruleId, state, ruleName, condition, action, negativeAction, callback) {
   winston.info('Saving rule state to %s on %s',state, ruleId)
 
   Rule.findOne({_id:ruleId}, function(err, foundRule) {
 
     if (foundRule) {
-      foundRule.ruleEnabled = state
+
+      if (state != undefined) {
+        foundRule.ruleEnabled = state
+      }
 
       if (ruleName && condition && action) {
         foundRule.ruleName = ruleName
         foundRule.conditions = [condition]
         foundRule.actions = [action]
+        foundRule.negativeActions = [negativeAction]
       }
 
       foundRule.save(function (err) {

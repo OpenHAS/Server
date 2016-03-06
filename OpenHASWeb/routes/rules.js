@@ -17,6 +17,7 @@ router.get('/new', auth.ensureAuthenticated, function(req, res) {
   vm.ruleName = ''
   vm.condition = ''
   vm.action = ''
+  vm.negativeAction = ''
 
   res.render('rule_editor',{viewModel:vm});
 });
@@ -26,8 +27,9 @@ router.post('/new', auth.ensureAuthenticated, function(req, res) {
   var ruleName = req.body.ruleName
   var condition = req.body.condition
   var action = req.body.action
+  var negativeAction = req.body.negativeAction
 
-  ruleManager.addRule(ruleName,condition,action, function(isSuccess) {
+  ruleManager.addRule(ruleName,condition,action, negativeAction, function(isSuccess) {
     res.redirect('/rules')
   })
 })
@@ -58,6 +60,7 @@ router.get('/:ruleId/edit', auth.ensureAuthenticated, function(req, res) {
       vm.ruleName = foundRule.ruleName
       vm.condition = foundRule.conditions[0]
       vm.action = foundRule.actions[0]
+      vm.negativeAction = foundRule.negativeActions[0]
 
       res.render('rule_editor',{viewModel:vm})
     } else {
@@ -71,8 +74,9 @@ router.post('/:ruleId/edit', auth.ensureAuthenticated, function(req, res) {
   var ruleName = req.body.ruleName
   var condition = req.body.condition
   var action = req.body.action
+  var negativeAction = req.body.negativeAction
 
-  ruleManager.modify(req.params.ruleId, req.body.state, ruleName, condition, action, function(isSuccess){
+  ruleManager.modify(req.params.ruleId, req.body.state, ruleName, condition, action, negativeAction,function(isSuccess){
     res.redirect('/rules')
   })
 

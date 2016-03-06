@@ -1,4 +1,6 @@
 var NodeManager = require('../dao/node_manager')
+var VariableManager = require('../dao/variable_manager')
+var winston = require('winston')
 var NodeTypes = require('./node_types')
 var wait = require('wait.for')
 
@@ -12,16 +14,20 @@ module.exports = {
 
   SetNodeState: function(nodeName, valueToSet) {
 
+    var result = wait.forMethod(NodeManager,'setValueByName', nodeName, valueToSet)
+
   },
 
   GetVariable : function(variableName) {
 
-    var globals = {}
-    globals.Target_Temperature = 1
+    var variable = wait.forMethod(VariableManager,'variableByName', variableName)
 
-    console.log('GetVariable called with name:%s', variableName)
-    var value = globals[variableName]
-    console.log('Returning value: %s', value)
-    return value
+    if (variable) {
+      winston.info('Returning value: %s for %s', variable.variableValue, variableName)
+      return variable.variableValue
+    } else {
+      winston.error('Variable not found: %s',variableName)
+      throw "Variable not found"
+    }
   }
 }

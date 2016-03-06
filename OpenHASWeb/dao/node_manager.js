@@ -155,6 +155,25 @@ NodeManager.prototype.setValue = function(nodeId, value) {
   })
 }
 
+NodeManager.prototype.setValueByName = function(nodeName, value, callback) {
+  this.findNodeWithName(nodeName, function(err, node){
+    if (node) {
+
+      var currentNodeType = NodeTypes.filter(function(element){return element.name==node.nodeType})[0]
+      var result = currentNodeType[node.setterFunction](value)
+
+      var command = node.address.replace(':',',') + ','+ result
+
+      MessageProcessor.sendCommand(command)
+      callback(null,null) //indicate no error
+    } else {
+      callback("Node not found",null)
+    }
+  })
+}
+
+
+
 NodeManager.prototype.getLastNodeValueByName = function(nodeName, callback) {
 
   this.findNodeWithName(nodeName, function (err, node) {

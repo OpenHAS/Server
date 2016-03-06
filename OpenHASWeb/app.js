@@ -45,13 +45,14 @@ var route_auth = require('./routes/auth')
 var route_rules = require('./routes/rules')
 var route_nodes = require('./routes/nodes')
 var route_settings = require('./routes/settings')
-
+var route_variables = require('./routes/variables')
 
 app.use('/', route_index)
 app.use('/auth', route_auth)
 app.use('/rules', route_rules)
 app.use('/nodes', route_nodes)
 app.use('/settings', route_settings)
+app.use('/variables', route_variables)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

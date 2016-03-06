@@ -5,7 +5,8 @@ var Rule = new Schema({
   ruleEnabled : Boolean,
   ruleName : String,
   conditions : [String],
-  actions : [String]
+  actions : [String],
+  negativeActions : [String] // negative actions executed if the condition evaluated to false
 })
 
 var RuleModel = mongoose.model('Rule', Rule);
