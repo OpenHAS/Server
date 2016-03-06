@@ -3,6 +3,8 @@ var Setting = require('./models/setting').Model
 
 var SettingsManager = function(){
   this.ManualOverrideKey = 'manualOverride'
+  this.MosquittoUser = 'mosquittoUser'
+  this.MosquittoPassword = 'mosquittoPassword'
 }
 
 SettingsManager.prototype.setValue = function(key, value, callback) {
