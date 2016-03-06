@@ -42,32 +42,38 @@ var fetchValues = function(nodeIds) {
 }
 
 var fetchValue = function(nodeId) {
-  console.log('get data for '+nodeId)
 
   var url = '/nodes/'+nodeId+'/value'
   $.getJSON(url,function(data){
 
-    console.log('data for node: %s data: %s', nodeId, JSON.stringify(data.result))
+    console.log('Data %s', JSON.stringify(data.result))
 
+    //set labels
     var selectorString = "span[id='"+ nodeId +"']"
-    $(selectorString).text(data.result.value)
+    var spans = $(selectorString)
 
-    var selectorString = "input[name='"+ nodeId +"']"
-    var switchValue = data.result.value == "1"
-    var sw = $(selectorString)
-
-    var lastChangeDate = new Date(sw.attr('data-lastchange'))
-    var receivedDataTimestamp = new Date(data.result.timestamp)
-
-    var deltaMilis = receivedDataTimestamp.getTime()-lastChangeDate.getTime()
-    console.log('Delta: %d', deltaMilis)
-    if (deltaMilis > 5000) {
-      sw.bootstrapSwitch('state',switchValue, true)
-    } else {
-      console.log('Not changing switch, reveived data is older than change')
+    if (spans.length > 0) {
+      spans.text(data.result.value)
+      spans.attr('title', data.result.timestamp)
     }
 
-    $(selectorString).attr('title', data.result.timestamp)
+    //set switches
+    var selectorString = "input[name='"+ nodeId +"']"
+    var sw = $(selectorString)
+
+    if (sw.length > 0) {
+      var switchValue = data.result.value == "1"
+      var lastChangeDate = new Date(sw.attr('data-lastchange'))
+      var receivedDataTimestamp = new Date(data.result.timestamp)
+
+      var deltaMilis = receivedDataTimestamp.getTime() - lastChangeDate.getTime()
+
+      if (deltaMilis > 5000) {
+        sw.bootstrapSwitch('state', switchValue, true)
+      } else {
+        console.log('Not changing switch, reveived data is older than change')
+      }
+    }
   })
 }
 
