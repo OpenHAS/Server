@@ -1,5 +1,15 @@
 $(document).ready(function(){
   var manSwitch = $('.manualSwitch')
-  var isEnabled = Boolean(manSwitch.data('state'))
-  manSwitch.bootstrapSwitch('state',isEnabled,isEnabled)
+
+  var url = '/settings/manualOverride/value'
+  manSwitch.on('switchChange.bootstrapSwitch', function(event, state) {
+    $.post(url,{'value':state})
+  });
+
+  $.getJSON(url,{default:false},function(data){
+
+    var state = data.result == 'true'
+    manSwitch.bootstrapSwitch('state',state,true)
+  })
+
 })

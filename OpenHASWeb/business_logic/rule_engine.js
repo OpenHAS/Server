@@ -3,6 +3,7 @@ var math = require('mathjs');
 var parserFunctions = require('./parser_functions')
 var wait = require('wait.for')
 var winston = require('winston')
+var SettingsManager = require('../dao/settings_manager')
 
 math.import({
   GetNodeState : parserFunctions.GetNodeState,
@@ -15,16 +16,19 @@ var RuleManager = require('../dao/rule_manager')
 
 var RuleEngine = function() {
   setInterval(this.process, 5000)
-  this.processInProgress = false
-}
+ }
 
 RuleEngine.prototype.process = function() {
-  if (this.processInProgress) {
-    //return
-  }
 
-  this.processInProgress = true
+  var self = module.exports
+  SettingsManager.getValue(SettingsManager.ManualOverrideKey, "false", function(settingValue){
+    if (settingValue != 'true') {
+      self.getRulesAndExecuteThem()
+    }
+  })
+}
 
+RuleEngine.prototype.getRulesAndExecuteThem = function() {
   //get all the active rules
   RuleManager.rules(function(rules){
     rules.filter(function(currentRule){
@@ -68,8 +72,6 @@ RuleEngine.prototype.process = function() {
           winston.error('Error evaluating negative action: %s', singleNegativeAction, err)
         }
       })
-
-      this.processInProgress = false
     })
   })
 }

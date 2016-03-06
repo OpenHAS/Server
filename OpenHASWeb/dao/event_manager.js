@@ -33,7 +33,7 @@ EventManager.prototype.saveEvent = function(event, callback) {
       if (callback)
         callback(false)
     } else {
-      winston.info('Event saved: %s', savedEvent._id.toString())
+
       if (callback)
         callback(true)
     }
