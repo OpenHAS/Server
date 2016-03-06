@@ -94,7 +94,7 @@ NodeManager.prototype.delete = function(nodeId, callback) {
 
 NodeManager.prototype.findNodeWithId = function(nodeId, callback) {
 
-  Node.findOne({_id:nodeId}, function(err, foundNode) {
+  Node.findOne({_id: nodeId}, function (err, foundNode) {
 
     if (foundNode) {
       callback(foundNode)
@@ -104,6 +104,21 @@ NodeManager.prototype.findNodeWithId = function(nodeId, callback) {
     }
   })
 }
+
+NodeManager.prototype.findNodeWithName = function(nodeName, callback) {
+
+  Node.findOne({nodeName:nodeName}, function(err, foundNode) {
+
+    if (foundNode) {
+      callback(null, foundNode)
+    } else {
+      winston.error('Node not found with name: %s', nodeName, err)
+      callback(err, null)
+    }
+  })
+}
+
+
 
 NodeManager.prototype.lastValues = function(nodeId, callback) {
 
@@ -136,6 +151,28 @@ NodeManager.prototype.setValue = function(nodeId, value) {
       var command = node.address.replace(':',',') + ','+ result
 
       MessageProcessor.sendCommand(command)
+    }
+  })
+}
+
+NodeManager.prototype.getLastNodeValueByName = function(nodeName, callback) {
+
+  this.findNodeWithName(nodeName, function (err, node) {
+    if (node) {
+
+      Event.find({source: node.address}).sort({timestamp: 'desc'}).limit(1).exec(function (err, events) {
+        if (events){
+          var event = events[0]
+
+          var currentNodeType = NodeTypes.filter(function(element){return element.name==node.nodeType})[0]
+          var result = currentNodeType[node.getterFunction](event)
+          callback(null, result)
+        } else {
+          callback('Event not found', null)
+        }
+      })
+    } else {
+      callback('Node not found', null)
     }
   })
 }

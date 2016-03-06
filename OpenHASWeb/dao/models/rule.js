@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 
 var Rule = new Schema({
-  enabled : Boolean,
+  ruleEnabled : Boolean,
   ruleName : String,
   conditions : [String],
   actions : [String]

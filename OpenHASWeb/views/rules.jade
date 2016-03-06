@@ -24,7 +24,7 @@ block content
           for currentRule in rules
             tr
               td
-                input.ruleEnabled(name='#{currentRule._id}', type='checkbox',data-size='mini', data-on-color='success', onSwitchChange='this.onSwitchChanged', data-state='#{currentRule.enabled}')
+                input.ruleEnabled(name='#{currentRule._id}', type='checkbox',data-size='mini', data-on-color='success', onSwitchChange='this.onSwitchChanged', data-state='#{currentRule.ruleEnabled}')
               td
                 a(href='/rules/#{currentRule._id}/edit') #{currentRule.ruleName}
               td

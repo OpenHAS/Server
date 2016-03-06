@@ -5,7 +5,7 @@ var TemperatureSensor = function() {
 }
 
 TemperatureSensor.prototype.getTemperature = function(event) {
- return event.parameters[1] + " C"
+ return Number(event.parameters[1])
 }
 
 var DoubleRelayActuator = function() {

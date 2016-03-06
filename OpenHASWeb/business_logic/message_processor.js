@@ -24,7 +24,6 @@ MessageProcessor.prototype.processStatusMessage = function(message) {
   if (parsedEvent) {
     this.eventManager.saveEvent(parsedEvent)
   }
-
 }
 
 MessageProcessor.prototype.processMessage = function(topic, message) {

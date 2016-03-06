@@ -14,7 +14,7 @@ RuleManager.prototype.rules = function(callback) {
 RuleManager.prototype.addRule = function(ruleName, condition, action, callback) {
 
   var newRule = new Rule()
-  newRule.enabled = true
+  newRule.ruleEnabled = true
   newRule.ruleName = ruleName
   newRule.conditions.push(condition)
   newRule.actions.push(action)
@@ -37,7 +37,7 @@ RuleManager.prototype.modify = function(ruleId, state, ruleName, condition, acti
   Rule.findOne({_id:ruleId}, function(err, foundRule) {
 
     if (foundRule) {
-      foundRule.enabled = state
+      foundRule.ruleEnabled = state
 
       if (ruleName && condition && action) {
         foundRule.ruleName = ruleName
