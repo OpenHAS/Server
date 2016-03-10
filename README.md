@@ -14,7 +14,7 @@ The container also exposes a volume where the interal database should be persist
 
 ### Starting the container for the very first time: 
 Because by default there is no username/password in the app, you should set up the admin user supplying the username/password to the docker container. For example:
-```docker run -p 1883:1883 -p 3000:3000 -e NEW_USER=admin -e NEW_PASSWORD=admin -e MQTT_HOST=mqtt://localhost -v /openhas/data:/data/db openhas/server
+`docker run -p 1883:1883 -p 3000:3000 -e NEW_USER=admin -e NEW_PASSWORD=admin -e MQTT_HOST=mqtt://localhost -v /openhas/data:/data/db openhas/server`
 Lets analyse this command:
 ||Parameter||Meaning||
 |run|Start a container|
@@ -34,4 +34,4 @@ After you changed the MQTT username/password, you need to stop and restart the a
 
 ### Starting the container subsequently: 
 Now you have the username and password already specified, you dont need to add them via environment variables. So see the modified command.
-```docker run -p 1883:1883 -p 3000:3000 -e MQTT_HOST=mqtt://localhost -v /openhas/data:/data/db openhas/server
+`docker run -p 1883:1883 -p 3000:3000 -e MQTT_HOST=mqtt://localhost -v /openhas/data:/data/db openhas/server`
