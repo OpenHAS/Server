@@ -1,0 +1,42 @@
+extends logged_in_layout
+
+block header
+  //script(src='/javascripts/rules_ui.js')
+
+block content
+  .row
+    .col-md-12
+      h1.page-header Variables
+
+  .row
+    .col-md-12
+      table.table
+        colgroup
+          col.col-md-2
+          col.col-md-2
+          col.col-md-2
+        thead
+          th Name
+          th Value
+          th Actions
+        tbody
+          for currentVariable in viewModel.variables
+            tr
+              td
+                label #{currentVariable.variableName}
+              td
+                label #{currentVariable.variableValue}
+              td
+                a(href='/variables/#{currentVariable._id}/delete')
+                  i.fa.fa-trash.fa-fw
+  .row
+    .col-md-3
+      h4 Add new variable
+  .row
+    form.form-horizontal(method='POST')
+      .col-md-2
+        input.form-control(name='varName', type='text', placeholder='Variable name')
+      .col-md-2
+        input.form-control(name='varValue', type='text', placeholder='Variable value')
+      .col-md-2
+        button.btn.btn-primary(type='submit') Save

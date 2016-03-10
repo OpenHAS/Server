@@ -1,0 +1,17 @@
+if viewModel.editMode
+  a(href='/nodes/#{currentNode._id}/edit')
+    span.pull-left Edit
+    span.pull-right
+      i.fa.fa-arrow-circle-right.fa-fw
+  .clearfix
+  a(href='/nodes/#{currentNode._id}/delete')
+    span.pull-left Delete
+    span.pull-right
+      i.fa.fa-trash.fa-fw
+  .clearfix
+else
+  a(href='#')
+    span.pull-left View Details
+    span.pull-right
+      i.fa.fa-arrow-circle-right
+    .clearfix

@@ -1,0 +1,41 @@
+extends logged_in_layout
+
+block content
+  .row
+    .col-lg-12
+      h1.page-header #{viewModel.title}
+        .pull-right
+          a.btn.btn-warning(href='/rules') Cancel
+  form.form-horizontal(method='POST')
+    .form-group
+      label.col-sm-2.control-label Rule name
+      .col-sm-6
+        input.form-control(name='ruleName', type='text', placeholder='The name of the rule, any text will do', value='#{viewModel.ruleName}')
+    .form-group
+      label.col-sm-2.control-label Condition
+      .col-sm-6
+        textarea.form-control(rows='3', name='condition')
+          |#{viewModel.condition}
+      .col-sm-2.text-center Insert a function
+        select.form-control
+          option getPacketParameter
+          option getVariable
+        a(href='#') Insert
+    .form-group
+      label.col-sm-2.control-label Action
+      .col-sm-6
+        textarea.form-control(rows='3', name='action')
+          |#{viewModel.action}
+    .form-group
+      label.col-sm-2.control-label Negative Action
+      .col-sm-6
+        textarea.form-control(rows='3', name='negativeAction')
+          | #{viewModel.negativeAction}
+      .col-sm-2.text-center Insert an action
+        select.form-control
+          option setVariable
+          option setModuleState
+        a(href='#') Insert
+    .form-group
+      .col-sm-offset-2.col-sm-10
+        button.btn.btn-primary(type='submit') Save

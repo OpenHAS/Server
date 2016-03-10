@@ -1,0 +1,15 @@
+extends logged_in_layout
+block header
+  script(type='text/javascript').
+    var viewModel = !{JSON.stringify(viewModel)};
+  script(src='/javascripts/nodes_ui.js')
+
+block content
+  .row
+    .col-lg-12
+      h1.page-header Dashboard
+
+  .row
+    for currentNode in viewModel.nodes
+      include includes/node/node_main
+

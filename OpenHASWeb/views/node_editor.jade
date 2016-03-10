@@ -1,0 +1,46 @@
+extends logged_in_layout
+block header
+  script(type='text/javascript').
+    var viewModel =!{JSON.stringify(viewModel)};
+  script(src='/javascripts/node_editor_ui.js')
+block content
+  .row
+    .col-lg-12
+      h1.page-header #{viewModel.title}
+        .pull-right
+          a.btn.btn-warning(href='/nodes') Cancel
+
+  form.form-horizontal(method='POST')
+    .form-group
+      label.col-sm-3.control-label Node type
+      .col-sm-6
+        select.form-control(name='nodeType', data-value='#{viewModel.nodeType}')
+          for currentNodeType in viewModel.nodeTypes
+            option #{currentNodeType.name}
+    .form-group
+      label.col-sm-3.control-label Node name
+      .col-sm-6
+        input.form-control(name='nodeName', type='text', placeholder='The name of the node which will be visible on the widget. Like Kitchen', value='#{viewModel.nodeName}')
+    .form-group
+      label.col-sm-3.control-label Node address
+      .col-sm-6
+        input.form-control(name='nodeAddress', type='text', placeholder='The address of the node in the following format: xbee:AABBCCDDEEFF', value='#{viewModel.nodeAddress}')
+
+    .form-group
+      label.col-sm-3.control-label Displayed parameter
+      .col-sm-6
+        select.form-control(name='getterFunction', data-value='#{viewModel.getterFunction}')
+
+    .form-group
+      label.col-sm-3.control-label Parameter to send
+      .col-sm-6
+        select.form-control(name='setterFunction', data-value='#{viewModel.setterFunction}')
+
+    .form-group
+      label.col-sm-3.control-label Should be displayed on dashboard
+      .col-sm-6
+        input.favouriteSwitch(name='favourite', type='checkbox',data-size='normal', data-on-color='success', data-state='#{viewModel.favourite}', data-on-text='YES', data-off-text='NO')
+
+    .form-group
+      .col-sm-offset-3.col-sm-10
+        button.btn.btn-primary(type='submit') Save

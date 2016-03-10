@@ -1,0 +1,34 @@
+extends logged_in_layout
+
+block header
+  script(src='/javascripts/rules_ui.js')
+
+block content
+  .row
+    .col-md-12
+      h1.page-header Rules
+        .pull-right
+          a.btn.btn-success(href='/rules/new') Add a new rule
+  .row
+    .col-md-12
+      table.table
+        colgroup
+          col.col-md-1
+          col.col-md-10
+          col.col-md-1
+        thead
+          th Enabled
+          th Name
+          th Actions
+        tbody
+          for currentRule in rules
+            tr
+              td
+                input.ruleEnabled(name='#{currentRule._id}', type='checkbox',data-size='mini', data-on-color='success', onSwitchChange='this.onSwitchChanged', data-state='#{currentRule.ruleEnabled}')
+              td
+                a(href='/rules/#{currentRule._id}/edit') #{currentRule.ruleName}
+              td
+                a(href='/rules/#{currentRule._id}/delete')
+                  i.fa.fa-trash.fa-fw
+                a(href='/rules/#{currentRule._id}/copy')
+                  i.fa.fa-files-o.fa-fw

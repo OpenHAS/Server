@@ -1,0 +1,14 @@
+extends logged_in_layout
+block header
+  script(type='text/javascript').
+    var viewModel = !{JSON.stringify(viewModel)};
+  script(src='/javascripts/nodes_ui.js')
+block content
+  .row
+    .col-md-12
+      h1.page-header Nodes
+        .pull-right
+          a.btn.btn-success(href='/nodes/new') Add a new node
+  .row
+    for currentNode in viewModel.nodes
+      include includes/node/node_main

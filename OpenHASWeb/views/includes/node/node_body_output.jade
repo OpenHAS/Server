@@ -1,0 +1,7 @@
+.row
+  .col-xs-3
+    i.fa.fa-bolt.fa-5x
+  .col-xs-9.text-right
+    input.actuatorSwitch(name='#{currentNode._id}', type='checkbox', data-state='true', onSwitchChange='this.outputSwitchChanged')
+    .medium
+      div #{currentNode.nodeName}
