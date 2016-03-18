@@ -1,9 +1,13 @@
 extends logged_in_layout
 
+block header
+  script(src='/javascripts/settings_ui.js')
+
 block content
   .row
     .col-lg-12
       h1.page-header Settings
+
   form.form-horizontal(method='POST',action='/settings/mqtt')
     .col-sm-4
       span.help-block In this section you can set the username and the password on the MQTT broker. Clients have to use this username and password to connect to the broker.
@@ -22,6 +26,27 @@ block content
     .form-group
       .col-sm-offset-3.col-sm-10
         button.btn.btn-primary(type='submit') Save MQTT settings
+
+  form.form-horizontal()
+    .col-sm-4
+      span.help-block In this section you can control API access. API clients are authenticating themself with a token, which you can generate here. You can also disable API access totally.
+    .row
+
+    .form-group
+      label.col-sm-3.control-label API Access enabled
+      .col-sm-6
+        .checkbox
+          label
+            input.switch(name='api_enabled', type='checkbox', data-state='#{viewModel.api_access_enabled}')
+
+    .form-group
+      label.col-sm-3.control-label API Token
+      .col-sm-6
+        input.form-control(name='api_token', type='text', value='#{viewModel.api_token}', readonly='true')
+    .form-group
+      .col-sm-offset-3.col-sm-10
+        button.btn.btn-primary(onclick='regenerate_api_token()', type='button') Regenerate API token
+
 
   form.form-horizontal(method='POST')
 
@@ -42,7 +67,7 @@ block content
     .form-group
       label.col-sm-3.control-label Anonymous dashboard access
       .col-sm-6
-        input(name='anonymous_dashboard', type='checkbox')
+        input.switch(name='anonymous_dashboard_access', type='checkbox', data-state='#{viewModel.anonymous_dashboard_access}' )
 
     .form-group
       .col-sm-offset-3.col-sm-10

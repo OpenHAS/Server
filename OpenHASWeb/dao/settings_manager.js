@@ -5,6 +5,9 @@ var SettingsManager = function(){
   this.ManualOverrideKey = 'manualOverride'
   this.MosquittoUser = 'mosquittoUser'
   this.MosquittoPassword = 'mosquittoPassword'
+  this.ApiToken = 'apiToken'
+  this.ApiEnabled = 'api_enabled'
+  this.AnonymousDashboardAccess = 'anonymous_dashboard_access'
 }
 
 SettingsManager.prototype.setValue = function(key, value, callback) {
