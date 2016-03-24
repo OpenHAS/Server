@@ -87,7 +87,7 @@ router.get('/:nodeId/delete', auth.ensureAuthenticated, function (req, res) {
   })
 })
 
-router.get('/:nodeId/value', auth.ensureAuthenticated, function(req, res) {
+router.get('/:nodeId/value', auth.ensureAuthenticatedForDashboard, function(req, res) {
   nodeManager.lastValues(req.params.nodeId, function(node, lastEvent) {
     if (lastEvent) {
 

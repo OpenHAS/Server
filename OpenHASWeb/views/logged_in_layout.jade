@@ -15,20 +15,25 @@ block masterContent
           span.icon-bar
         a.navbar-brand(href='/') OpenHAS
       ul.nav.navbar-top-links.navbar-right
-
-        li.dropdown
-          a.dropdown-toggle(data-toggle='dropdown', href='#') Manual mode
-          ul.dropdown-menu.dropdown-tasks
-            li
-              div
-                strong Manual override
-              div
-                | If the switch is on, all rules are disabled
-                input.manualSwitch(type='checkbox', data-state='true',data-size='mini')
-        li
-          a(href='/auth/logout')
-            i.fa.fa-sign-out.fa-fw
-            |  Logout
+        if viewModel != null && viewModel.shouldHideTopMenu == true
+          li
+            a(href='/auth/login')
+              i.fa.fa-sign-out.fa-fw
+              |  Login
+        else
+          li.dropdown
+            a.dropdown-toggle(data-toggle='dropdown', href='#') Manual mode
+            ul.dropdown-menu.dropdown-tasks
+              li
+                div
+                  strong Manual override
+                div
+                  | If the switch is on, all rules are disabled
+                  input.manualSwitch(type='checkbox', data-state='true',data-size='mini')
+          li
+            a(href='/auth/logout')
+              i.fa.fa-sign-out.fa-fw
+              |  Logout
       .navbar-default.sidebar(role='navigation')
         .sidebar-nav.navbar-collapse
           ul#side-menu.nav.in
