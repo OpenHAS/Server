@@ -1,3 +1,4 @@
+'use strict'
 var mongoose = require('mongoose')
 var winston = require('winston')
 var Node = require('./models/node').Model
@@ -11,7 +12,7 @@ var NodeTypes = require('../business_logic/node_types')
 var NodeManager = function(){}
 
 NodeManager.prototype.nodes = function(callback) {
-  Node.find(function(err, nodes){
+  Node.find().sort({nodeName: 'asc'}).exec(function(err, nodes){
     callback(nodes)
   })
 }
@@ -31,6 +32,7 @@ NodeManager.prototype.addNode = function(nodeObject, callback) {
   newNode.nodeType = nodeObject.nodeType
   newNode.getterFunction = nodeObject.getterFunction
   newNode.setterFunction = nodeObject.setterFunction
+  newNode.calibrationFactor = nodeObject.calibrationFactor
 
   newNode.save(function(err, savedNode){
 
@@ -57,6 +59,7 @@ NodeManager.prototype.modify = function(nodeId, nodeObject, callback) {
       foundNode.nodeType = nodeObject.nodeType
       foundNode.getterFunction = nodeObject.getterFunction
       foundNode.setterFunction = nodeObject.setterFunction
+      foundNode.calibrationFactor = nodeObject.calibrationFactor
 
       foundNode.save(function (err) {
 
@@ -119,7 +122,6 @@ NodeManager.prototype.findNodeWithName = function(nodeName, callback) {
 }
 
 
-
 NodeManager.prototype.lastValues = function(nodeId, callback) {
 
   this.findNodeWithId(nodeId, function (node) {
@@ -150,13 +152,14 @@ NodeManager.prototype.setValue = function(nodeId, value) {
 
       var command = node.address.replace(':',',') + ','+ result
 
-      MessageProcessor.sendCommand(command)
+      var mp = require('../business_logic/message_processor')
+      mp.sendCommand(command)
     }
   })
 }
 
 NodeManager.prototype.setValueByName = function(nodeName, value, callback) {
-  this.findNodeWithName(nodeName, function(err, node){
+  this.findNodeWithName(nodeName, (err, node) => {
     if (node) {
 
       var currentNodeType = NodeTypes.filter(function(element){return element.name==node.nodeType})[0]
@@ -164,7 +167,9 @@ NodeManager.prototype.setValueByName = function(nodeName, value, callback) {
 
       var command = node.address.replace(':',',') + ','+ result
 
-      MessageProcessor.sendCommand(command)
+      var mp = require('../business_logic/message_processor')
+      mp.sendCommand(command)
+
       callback(null,null) //indicate no error
     } else {
       callback("Node not found",null)
@@ -172,29 +177,54 @@ NodeManager.prototype.setValueByName = function(nodeName, value, callback) {
   })
 }
 
+NodeManager.prototype.getLastNodeValue = function(node, callback) {
+  Event.find({source: node.address}).sort({timestamp: 'desc'}).limit(1).exec(function (err, events) {
+    if (events && events.length > 0){
+      var event = events[0]
 
+      var currentNodeType = NodeTypes.filter(function(element){return element.name==node.nodeType})[0]
+      var result = {}
+      
+      result.timestamp = event.timestamp
+      result.nodeId = node._id
+      result.rawValue = currentNodeType[node.getterFunction](event)
+      result.value = currentNodeType[node.getterFunction](event, node.calibrationFactor)
 
-NodeManager.prototype.getLastNodeValueByName = function(nodeName, callback) {
+      callback(null, result)
+    } else {
+      callback('Event not found', null)
+    }
+  })
+}
 
-  this.findNodeWithName(nodeName, function (err, node) {
+NodeManager.prototype.getLastNodeValueById = function(nodeId, callback) {
+  var self = this
+  this.findNodeWithId(nodeId, function (node) {
     if (node) {
 
-      Event.find({source: node.address}).sort({timestamp: 'desc'}).limit(1).exec(function (err, events) {
-        if (events){
-          var event = events[0]
+      self.getLastNodeValue(node, callback);
 
-          var currentNodeType = NodeTypes.filter(function(element){return element.name==node.nodeType})[0]
-          var result = currentNodeType[node.getterFunction](event)
-          callback(null, result)
-        } else {
-          callback('Event not found', null)
-        }
-      })
     } else {
       callback('Node not found', null)
     }
   })
 }
+
+
+
+NodeManager.prototype.getLastNodeValueByName = function(nodeName, callback) {
+  var self = this
+  this.findNodeWithName(nodeName, function (err, node) {
+    if (node) {
+
+      self.getLastNodeValue(node, callback);
+
+    } else {
+      callback('Node not found', null)
+    }
+  })
+}
+
 
 
 

@@ -1,6 +1,9 @@
 var mongoose = require('mongoose')
 var Event = require('./models/event').Model
+var Node = require('./models/node').Model
 var winston = require('winston')
+var NodeManager = require('./node_manager')
+
 
 var EventManager = function(){}
 
@@ -27,9 +30,24 @@ EventManager.prototype.parseEvent = function(eventAsString) {
 
 EventManager.prototype.saveEvent = function(event, callback) {
 
+  //save the event under each node
+  // Node.find({address : event.source}, function (error, nodes) {
+  //   for (var index = 0; index < nodes.length; index++) {
+  //     var currentNode = nodes[index]
+  //
+  //     currentNode.events.push(event)
+  //     currentNode.save(function(error, savedNode) {
+  //       if (error) {
+  //         winston.error('Error saving an event to its parent node:', error)
+  //       }
+  //     })
+  //   }
+  // })
+
+  //but also save it to the event store
   event.save(function(error,savedEvent){
     if (error) {
-      winston.error('Error saving event.', error)
+      winston.error('Error saving event to the event store:', error)
       if (callback)
         callback(false)
     } else {
