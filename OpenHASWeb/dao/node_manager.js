@@ -18,7 +18,7 @@ NodeManager.prototype.nodes = function(callback) {
 }
 
 NodeManager.prototype.favouriteNodes = function(callback) {
-  Node.find({favourite:true}, function(err, nodes){
+  Node.find({favourite:true}).sort({nodeName: 'asc'}).exec(function(err, nodes){
     callback(nodes)
   })
 }

@@ -10,8 +10,6 @@ if viewModel.editMode
       i.fa.fa-trash.fa-fw
   .clearfix
 else
-  a(href='#')
-    span.pull-left View Details
-    span.pull-right
-      i.fa.fa-arrow-circle-right
-    .clearfix
+  span.pull-left Last updated:&nbsp;
+  span.lastUpdateLabel(id='#{currentNode._id}') Never
+  .clearfix
