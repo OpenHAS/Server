@@ -23,6 +23,7 @@ router.get('/new', auth.ensureAuthenticated, function(req, res) {
   vm.nodeType = NodeTypes[0].name
   vm.nodeTypes = NodeTypes
   vm.getterFunction = NodeTypes[0].getters[0]
+  vm.calibrationFactor = 0
 
   res.render('node_editor',{viewModel:vm});
 });
@@ -36,6 +37,13 @@ router.post('/new', auth.ensureAuthenticated, function(req, res) {
   nodeObject.favourite = req.body.favourite == 'on'
   nodeObject.getterFunction = req.body.getterFunction
   nodeObject.setterFunction = req.body.setterFunction
+
+  var cf = req.body.calibrationFactor
+  if (cf != '' && cf != 0) {
+    nodeObject.calibrationFactor = cf
+  } else {
+    nodeObject.calibrationFactor = undefined
+  }
 
   nodeManager.addNode(nodeObject, function() {
     res.redirect('/nodes')
@@ -58,6 +66,11 @@ router.get('/:nodeId/edit', auth.ensureAuthenticated, function(req, res) {
       vm.nodeTypes = NodeTypes
       vm.getterFunction = foundNode.getterFunction
       vm.setterFunction = foundNode.setterFunction
+      if (foundNode.calibrationFactor != undefined) {
+        vm.calibrationFactor = foundNode.calibrationFactor
+      } else {
+        vm.calibrationFactor = ''
+      }
 
       res.render('node_editor',{viewModel:vm})
     } else {
@@ -76,6 +89,13 @@ router.post('/:nodeId/edit', auth.ensureAuthenticated, function(req, res) {
   nodeObject.getterFunction = req.body.getterFunction
   nodeObject.setterFunction = req.body.setterFunction
 
+  var cf = req.body.calibrationFactor
+  if (cf != '' && cf != 0) {
+    nodeObject.calibrationFactor = cf
+  } else {
+    nodeObject.calibrationFactor = undefined
+  }
+
   nodeManager.modify(req.params.nodeId, nodeObject, function() {
     res.redirect('/nodes')
   })
@@ -87,23 +107,10 @@ router.get('/:nodeId/delete', auth.ensureAuthenticated, function (req, res) {
   })
 })
 
-router.get('/:nodeId/value', auth.ensureAuthenticated, function(req, res) {
-  nodeManager.lastValues(req.params.nodeId, function(node, lastEvent) {
-    if (lastEvent) {
-
-      //find the getter function
-      var currentNodeType = NodeTypes.filter(function(element){return element.name==node.nodeType})[0]
-      var result = currentNodeType[node.getterFunction](lastEvent)
-
-      var vm = {}
-      vm.nodeId = node._id
-      vm.value = result
-      vm.timestamp = lastEvent.timestamp
-
-      res.send({result:vm})
-    } else {
-      res.send({result:null})
-    }
+router.get('/:nodeId/value', auth.ensureAuthenticatedForDashboard, function(req, res) {
+  
+  nodeManager.getLastNodeValueById(req.params.nodeId, function(error, lastEvent) {
+    res.send({result:lastEvent})
   })
 })
 

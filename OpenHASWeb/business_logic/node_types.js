@@ -4,8 +4,13 @@ var TemperatureSensor = function() {
   this.setters = []
 }
 
-TemperatureSensor.prototype.getTemperature = function(event) {
- return Number(event.parameters[1])
+TemperatureSensor.prototype.getTemperature = function(event, calibrationFactor) {
+
+  if (calibrationFactor != undefined) {
+    return Number(event.parameters[1]) + calibrationFactor
+  } else {
+    return Number(event.parameters[1])
+  }
 }
 
 var DoubleRelayActuator = function() {

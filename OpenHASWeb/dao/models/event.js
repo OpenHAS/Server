@@ -5,7 +5,6 @@ var Event = new Schema({
   timestamp : Date,
   source : String,
   parameters : [String]
-
 })
 
 var EventModel = mongoose.model('Event', Event);

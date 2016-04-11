@@ -48,14 +48,24 @@ var fetchValue = function(nodeId) {
 
     console.log('Data %s', JSON.stringify(data.result))
 
-    //set labels
-    var selectorString = "span[id='"+ nodeId +"']"
+    //set value labels
+    var selectorString = "span.value[id='"+ nodeId +"']"
     var spans = $(selectorString)
 
     if (spans.length > 0) {
       spans.text(data.result.value)
       spans.attr('title', data.result.timestamp)
     }
+
+    //set last update time label
+    var selectorString = "span.lastUpdateLabel[id='"+ nodeId +"']"
+    var spans = $(selectorString)
+
+    if (spans.length > 0) {
+      spans.text(new Date(data.result.timestamp).toLocaleString('hu-HU'))
+    }
+    
+    
 
     //set switches
     var selectorString = "input[name='"+ nodeId +"']"

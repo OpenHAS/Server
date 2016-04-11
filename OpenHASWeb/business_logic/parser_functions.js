@@ -9,7 +9,7 @@ module.exports = {
   GetNodeState:  function(nodeName) {
 
     var lastValue = wait.forMethod(NodeManager,'getLastNodeValueByName', nodeName)
-    return lastValue
+    return lastValue.value
   },
 
   SetNodeState: function(nodeName, valueToSet) {

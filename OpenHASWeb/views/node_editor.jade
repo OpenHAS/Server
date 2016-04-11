@@ -42,5 +42,10 @@ block content
         input.favouriteSwitch(name='favourite', type='checkbox',data-size='normal', data-on-color='success', data-state='#{viewModel.favourite}', data-on-text='YES', data-off-text='NO')
 
     .form-group
+      label.col-sm-3.control-label Calibration factor
+      .col-sm-6
+        input.form-control(name='calibrationFactor', value='#{viewModel.calibrationFactor}')
+
+    .form-group
       .col-sm-offset-3.col-sm-10
         button.btn.btn-primary(type='submit') Save
