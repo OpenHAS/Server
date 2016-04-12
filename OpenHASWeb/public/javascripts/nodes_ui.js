@@ -53,7 +53,7 @@ var fetchValue = function(nodeId) {
     var spans = $(selectorString)
 
     if (spans.length > 0) {
-      spans.text(data.result.value)
+      spans.text(data.result.value.toFixed(1))
       spans.attr('title', data.result.timestamp)
     }
 
