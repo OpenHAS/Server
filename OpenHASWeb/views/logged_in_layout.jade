@@ -36,26 +36,29 @@ block masterContent
               |  Logout
       .navbar-default.sidebar(role='navigation')
         .sidebar-nav.navbar-collapse
-          ul#side-menu.nav.in
-            li
-              a(href='/dashboard')
-                i.fa.fa-dashboard.fa-fw
-                |  Dashboard
-            li
-              a(href='/nodes')
-                i.fa.fa-cubes.fa-fw
-                |  Nodes
-            li
-              a(href='/rules')
-                i.fa.fa-list.fa-fw
-                |  Rules
-            li
-              a(href='/variables')
-                i.fa.fa-database.fa-fw
-                |  Variables
-            li
-              a(href='/settings')
-                i.fa.fa-cogs.fa-fw
-                |  Settings
+          if viewModel != null && viewModel.shouldHideTopMenu == true
+            
+          else
+            ul#side-menu.nav.in
+              li
+                a(href='/dashboard')
+                  i.fa.fa-dashboard.fa-fw
+                  |  Dashboard
+              li
+                a(href='/nodes')
+                  i.fa.fa-cubes.fa-fw
+                  |  Nodes
+              li
+                a(href='/rules')
+                  i.fa.fa-list.fa-fw
+                  |  Rules
+              li
+                a(href='/variables')
+                  i.fa.fa-database.fa-fw
+                  |  Variables
+              li
+                a(href='/settings')
+                  i.fa.fa-cogs.fa-fw
+                  |  Settings
     #page-wrapper
       block content
