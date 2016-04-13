@@ -235,12 +235,23 @@ NodeManager.prototype.getFavoriteNodesLastValue = function (callback) {
         values.push(nodeValue)
 
         if (values.length == nodes.length) {
+
+          values.sort(compare)
           callback(values)
         }
 
       })
     }
   })
+}
+
+function compare(a,b) {
+  if (a.nodeName < b.nodeName)
+    return -1;
+  else if (a.nodeName > b.nodeName)
+    return 1;
+  else
+    return 0;
 }
 
 module.exports = new NodeManager()

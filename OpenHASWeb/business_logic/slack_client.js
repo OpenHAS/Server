@@ -62,7 +62,7 @@ SlackClient.prototype.processMessage = function(data) {
 
         if (value != 'NaN') {
 
-          var message = '*'+currentNode.nodeName + ":* " + value + "℃ @" + moment(currentNode.timestamp).format('HH:mm:ss')+"\n"
+          var message = '*'+currentNode.nodeName + ":* " + value + "℃ @"+"\n"
           msgToSend += message
 
           if (value < minimum) {
