@@ -187,6 +187,7 @@ NodeManager.prototype.getLastNodeValue = function(node, callback) {
       
       result.timestamp = event.timestamp
       result.nodeId = node._id
+      result.nodeName = node.nodeName
       result.rawValue = currentNodeType[node.getterFunction](event)
       result.value = currentNodeType[node.getterFunction](event, node.calibrationFactor)
 
@@ -210,8 +211,6 @@ NodeManager.prototype.getLastNodeValueById = function(nodeId, callback) {
   })
 }
 
-
-
 NodeManager.prototype.getLastNodeValueByName = function(nodeName, callback) {
   var self = this
   this.findNodeWithName(nodeName, function (err, node) {
@@ -225,7 +224,23 @@ NodeManager.prototype.getLastNodeValueByName = function(nodeName, callback) {
   })
 }
 
+NodeManager.prototype.getFavoriteNodesLastValue = function (callback) {
+  var self = this
+  var values = []
+  self.favouriteNodes(function (nodes) {
+    for (var i = 0; i < nodes.length; i++) {
+      var currentNode = nodes[i];
+      self.getLastNodeValue(currentNode,function(error, nodeValue) {
 
+        values.push(nodeValue)
 
+        if (values.length == nodes.length) {
+          callback(values)
+        }
+
+      })
+    }
+  })
+}
 
 module.exports = new NodeManager()

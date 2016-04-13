@@ -8,6 +8,7 @@ var SettingsManager = function(){
   this.ApiToken = 'apiToken'
   this.ApiEnabled = 'api_enabled'
   this.AnonymousDashboardAccess = 'anonymous_dashboard_access'
+  this.SlackToken = 'slack_token'
 }
 
 SettingsManager.prototype.setValue = function(key, value, callback) {

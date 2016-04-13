@@ -47,6 +47,20 @@ block content
       .col-sm-offset-3.col-sm-10
         button.btn.btn-primary(onclick='regenerate_api_token()', type='button') Regenerate API token
 
+  form.form-horizontal(method='POST',action='/settings/slack')
+    .col-sm-4
+      span.help-block Slack integration
+    .row
+
+    .form-group
+      label.col-sm-3.control-label Slack token
+      .col-sm-6
+        input.form-control(name='slack_token', type='text', value='#{viewModel.slack_token}')
+
+    .form-group
+      .col-sm-offset-3.col-sm-10
+        button.btn.btn-primary(type='submit') Save Slack token
+
 
   form.form-horizontal(method='POST')
 

@@ -3,6 +3,7 @@ var router = express.Router();
 var auth = require('../business_logic/authentication_handler')
 var SettingsManager = require('../dao/settings_manager')
 var uuid = require('node-uuid')
+var SlackClient = require('../business_logic/slack_client')
 
 router.get('/', auth.ensureAuthenticated, function (req, res) {
 
@@ -11,19 +12,22 @@ router.get('/', auth.ensureAuthenticated, function (req, res) {
       SettingsManager.getValue(SettingsManager.ApiToken, "", function (savedApiToken) {
         SettingsManager.getValue(SettingsManager.ApiEnabled, "false", function (savedApiEnabled) {
           SettingsManager.getValue(SettingsManager.AnonymousDashboardAccess, "false", function (savedAnonAccess) {
+            SettingsManager.getValue(SettingsManager.SlackToken, "", function (savedSlackToken) {
 
 
-            var vm = {}
+              var vm = {}
 
-            vm.mqtt_username = savedUser
-            vm.mqtt_password = savedPassword
-            vm.web_username = 'admin'
-            vm.web_password = 'admin'
-            vm.api_token = savedApiToken
-            vm.api_access_enabled = savedApiEnabled == 'true'
-            vm.anonymous_dashboard_access = savedAnonAccess == 'true'
+              vm.mqtt_username = savedUser
+              vm.mqtt_password = savedPassword
+              vm.web_username = 'admin'
+              vm.web_password = 'admin'
+              vm.api_token = savedApiToken
+              vm.api_access_enabled = savedApiEnabled == 'true'
+              vm.anonymous_dashboard_access = savedAnonAccess == 'true'
+              vm.slack_token = savedSlackToken
 
-            res.render('settings', {viewModel: vm})
+              res.render('settings', {viewModel: vm})
+            })
           })
         })
       })
@@ -38,6 +42,15 @@ router.post('/mqtt', auth.ensureAuthenticated, function (req, res) {
       res.redirect('/settings')
     })
   })
+})
+
+router.post('/slack', auth.ensureAuthenticated, function (req, res) {
+
+  SettingsManager.setValue(SettingsManager.SlackToken, req.body.slack_token, function (err, savedToken) {
+    SlackClient.connect() //reinit the connection
+    res.redirect('/settings')
+  })
+
 })
 
 router.get('/:settingsKey/value', auth.ensureAuthenticated, function (req, res) {
