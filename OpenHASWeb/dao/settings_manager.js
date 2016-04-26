@@ -1,5 +1,6 @@
 var mongoose = require('mongoose')
 var Setting = require('./models/setting').Model
+var Q = require('q')
 
 var SettingsManager = function(){
   this.ManualOverrideKey = 'manualOverride'
@@ -40,5 +41,16 @@ SettingsManager.prototype.getValue = function(key, defaultValue, callback) {
   })
 }
 
+
+SettingsManager.prototype.getValueDeferred = function(key, defaultValue) {
+
+  var deferred = Q.defer()
+
+  this.getValue(key,defaultValue,function(readValue){
+    deferred.resolve(readValue)
+  })
+
+  return deferred.promise
+}
 
 module.exports = new SettingsManager()

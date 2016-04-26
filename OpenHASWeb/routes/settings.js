@@ -4,35 +4,33 @@ var auth = require('../business_logic/authentication_handler')
 var SettingsManager = require('../dao/settings_manager')
 var uuid = require('node-uuid')
 var SlackClient = require('../business_logic/slack_client')
+var Q = require('q')
 
 router.get('/', auth.ensureAuthenticated, function (req, res) {
 
-  SettingsManager.getValue(SettingsManager.MosquittoUser, "", function (savedUser) {
-    SettingsManager.getValue(SettingsManager.MosquittoPassword, "", function (savedPassword) {
-      SettingsManager.getValue(SettingsManager.ApiToken, "", function (savedApiToken) {
-        SettingsManager.getValue(SettingsManager.ApiEnabled, "false", function (savedApiEnabled) {
-          SettingsManager.getValue(SettingsManager.AnonymousDashboardAccess, "false", function (savedAnonAccess) {
-            SettingsManager.getValue(SettingsManager.SlackToken, "", function (savedSlackToken) {
+  Q.all(
+    [
+      SettingsManager.getValueDeferred(SettingsManager.MosquittoUser,""),
+      SettingsManager.getValueDeferred(SettingsManager.MosquittoPassword, ""),
+      SettingsManager.getValueDeferred(SettingsManager.ApiToken, ""),
+      SettingsManager.getValueDeferred(SettingsManager.ApiEnabled, "false"),
+      SettingsManager.getValueDeferred(SettingsManager.AnonymousDashboardAccess, "false"),
+      SettingsManager.getValueDeferred(SettingsManager.SlackToken, "")
+    ])
+    .spread(function(mqtt_username, mqtt_password, api_token, api_enabled, anon_access_enabled, slack_token){
+      var vm = {}
 
+      vm.mqtt_username = mqtt_username
+      vm.mqtt_password = mqtt_password
+      vm.web_username = 'admin'
+      vm.web_password = 'admin'
+      vm.api_token = api_token
+      vm.api_access_enabled = api_enabled == 'true'
+      vm.anonymous_dashboard_access = anon_access_enabled == 'true'
+      vm.slack_token = slack_token
 
-              var vm = {}
-
-              vm.mqtt_username = savedUser
-              vm.mqtt_password = savedPassword
-              vm.web_username = 'admin'
-              vm.web_password = 'admin'
-              vm.api_token = savedApiToken
-              vm.api_access_enabled = savedApiEnabled == 'true'
-              vm.anonymous_dashboard_access = savedAnonAccess == 'true'
-              vm.slack_token = savedSlackToken
-
-              res.render('settings', {viewModel: vm})
-            })
-          })
-        })
-      })
+      res.render('settings', {viewModel: vm})
     })
-  })
 })
 
 router.post('/mqtt', auth.ensureAuthenticated, function (req, res) {
