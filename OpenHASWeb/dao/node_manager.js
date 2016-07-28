@@ -245,6 +245,51 @@ NodeManager.prototype.getFavoriteNodesLastValue = function (callback) {
   })
 }
 
+NodeManager.prototype.getNodeValuesById = function(nodeId, startDate, callback) {
+  var self = this
+  //first we load up the node
+  this.findNodeWithId(nodeId, function(node, error){
+
+    var result = {}
+    result.node = node
+
+    if (node) {
+      var result = {}
+      result.node = node
+      result.events = []
+
+      var currentNodeType = NodeTypes.filter(function(element){return element.name==node.nodeType})[0]
+
+      //then load the values for this specific node
+      var filter = {}
+      filter.source = node.address
+      filter.timestamp = {"$gte": startDate}
+
+      Event.find(filter).sort({timestamp: 'desc'}).exec(function (err, events) {
+        for (var i = 0; i < events.length; i++) {
+          var currentEvent = events[i]
+
+          var transformedEvent = {}
+
+          transformedEvent.timestamp = currentEvent.timestamp
+          transformedEvent.nodeId = node._id
+          transformedEvent.nodeName = node.nodeName
+          transformedEvent.rawValue = currentNodeType[node.getterFunction](currentEvent)
+          transformedEvent.value = currentNodeType[node.getterFunction](currentEvent, node.calibrationFactor)
+
+          result.events.push(transformedEvent)
+        }
+
+        callback(result, null)
+      })
+
+    } else {
+      callback(null, "Error loading the node with id")
+    }
+
+  })
+}
+
 function compare(a,b) {
   if (a.nodeName < b.nodeName)
     return -1;

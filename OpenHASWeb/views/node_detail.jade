@@ -1,0 +1,50 @@
+extends logged_in_layout
+
+block header
+  script(type='text/javascript').
+
+  script(src='/javascripts/nodes_ui.js')
+
+block content
+  .row
+    .col-lg-12
+      h1.page-header Details
+
+      .panel.panel-info
+        .panel-heading
+          h3.panel-title.clearfix
+            div.pull-left #{viewModel.node.nodeName}
+            div.pull-right
+              | Current value: #{viewModel.lastValue.toFixed(1)} ℃
+          div Displayed time range: &nbsp;
+            .btn-group
+              button(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="true").btn.btn-xs.btn-success.dropdown-toggle #{viewModel.offset} day(s) &nbsp;
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href="?offset=1") 1 day
+                  a(href="?offset=7") 7 days
+                  a(href="?offset=30") 30 days
+                  a(href="?offset=365") 365 days
+        .panel-body
+
+          table.table.table-condensed.table-bordered
+            thead
+              tr.active
+                th Minimum
+                th Average
+                th Maximum
+                th Number of meas.
+                th First measurement
+                th Last measurement
+            tbody
+              tr
+                td #{viewModel.minValue.toFixed(1)} ℃
+                td #{viewModel.avgValue.toFixed(1)} ℃
+                td #{viewModel.maxValue.toFixed(1)} ℃
+                td #{viewModel.count}
+                td #{viewModel.firstTimestamp}
+                td #{viewModel.lastTimestamp}
+
+        .panel-footer
+          a(href="#") Download dataset

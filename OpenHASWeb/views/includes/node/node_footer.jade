@@ -12,4 +12,7 @@ if viewModel.editMode
 else
   span.pull-left Last updated:&nbsp;
   span.lastUpdateLabel(id='#{currentNode._id}') Never
+  span.pull-right
+    a(href="/nodes/#{currentNode._id}/detail")
+      i.fa.fa-arrow-circle-right.fa-fw
   .clearfix

@@ -121,5 +121,73 @@ router.post('/:nodeId/setValue', auth.ensureAuthenticated, function(req,res) {
   res.sendStatus(200)
 })
 
+router.get('/:nodeId/detail', auth.ensureAuthenticatedForDashboard, function (req, res) {
+
+  var vm = {}
+  vm.editMode = false
+  vm.shouldHideTopMenu = !req.isAuthenticated()
+
+  var timeSpan = 1
+  if (req.query.offset && req.query.offset <= 365 & req.query.offset >= 1) {
+    timeSpan = req.query.offset
+  }
+  var startDate = new Date()
+  startDate.setDate(startDate.getDate()-timeSpan)
+
+  console.log("Loading events for node %s since %s",req.params.nodeId, startDate)
+
+  nodeManager.getNodeValuesById(req.params.nodeId, startDate, function (result, error) {
+
+    console.log("Got %s events for node %s since %s", result.events.length, result.node._id, startDate)
+
+    vm.offset = timeSpan
+    vm.node = result.node
+    vm.events = result.events
+
+    var min = Number.MAX_VALUE
+    var max = Number.MIN_VALUE
+    var sum = 0
+    var count = 0
+    for (var i = 0; i < result.events.length; i++) {
+      var currentEvent = result.events[i];
+
+      if (isNumeric(currentEvent.value)) {
+        if (currentEvent.value < min) {
+          min = currentEvent.value
+        }
+
+        if (currentEvent.value > max) {
+          max = currentEvent.value
+        }
+        sum += currentEvent.value
+        count++
+      }
+
+
+    }
+
+    vm.minValue = min
+    vm.maxValue = max
+    vm.avgValue = sum / count
+    vm.count = count
+    vm.firstTimestamp = "--"
+    vm.lastTimestamp = "--"
+    vm.lastValue = "--"
+    if (result.events.length > 0) {
+      var ts = result.events[result.events.length-1].timestamp
+      vm.firstTimestamp = new Date(ts).toLocaleString('hu-HU')
+      vm.lastTimestamp = new Date(result.events[0].timestamp).toLocaleString('hu-HU')
+      vm.lastValue = result.events[0].value
+    }
+
+    res.render('node_detail',{viewModel:vm});
+
+  })
+
+})
+
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
 
 module.exports = router
