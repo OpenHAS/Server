@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+var winston = require('winston')
 var Schema = mongoose.Schema
 
 var Event = new Schema({
@@ -19,7 +20,7 @@ EventModel.on('index', function(error) {
     errorMessage = error
   }
 
-  console.log('Indexes have been ensured on Event. Error: '+errorMessage)
+  winston.info('Indexes have been ensured on Event. Error: '+errorMessage)
 });
 
 module.exports.Schema = Event

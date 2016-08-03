@@ -5,15 +5,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
 var session = require('express-session');
-
+var reportGenerator = null
 var config = require('./config')
+var winston = require('winston')
 
 var mongoose = require('mongoose');
 mongoose.connect(config.mongodb.connectionString);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', function() {
-  console.log("MongoDB connection is up. App ready")
+  winston.info("MongoDB connection is up. App ready")
+  //schedule the report generator
+  reportGenerator = require("./business_logic/report_generator")
 });
 
 var authProvider = require('./business_logic/authentication_handler')

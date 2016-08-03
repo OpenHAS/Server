@@ -40,7 +40,7 @@ MessageProcessor.prototype.processStatusMessage = function(message) {
 }
 
 MessageProcessor.prototype.processMessage = function(topic, message) {
-  winston.info('Message: %s Topic: %s',message.toString(), topic)
+  //winston.info('Message: %s Topic: %s',message.toString(), topic)
 
   if (topic.endsWith(statusUpdateTopic)) {
     MessageProcessor.prototype.processStatusMessage.call(module.exports,message)

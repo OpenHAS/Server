@@ -20,7 +20,7 @@ SlackClient.prototype.connect = function() {
 
         self.slack = new slackAPI({
           'token': savedSlackToken,
-          'logging': true,
+          'logging': false,
           'autoReconnect': true
         });
 

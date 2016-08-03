@@ -162,8 +162,6 @@ router.get('/:nodeId/detail', auth.ensureAuthenticatedForDashboard, function (re
         sum += currentEvent.value
         count++
       }
-
-
     }
 
     vm.minValue = min

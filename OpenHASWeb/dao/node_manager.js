@@ -178,6 +178,7 @@ NodeManager.prototype.setValueByName = function(nodeName, value, callback) {
 }
 
 NodeManager.prototype.getLastNodeValue = function(node, callback) {
+  console.time("GetLastNodeValue")
   Event.find({source: node.address}).sort({timestamp: 'desc'}).limit(1).exec(function (err, events) {
     if (events && events.length > 0){
       var event = events[0]
@@ -192,6 +193,7 @@ NodeManager.prototype.getLastNodeValue = function(node, callback) {
       result.value = currentNodeType[node.getterFunction](event, node.calibrationFactor)
 
       callback(null, result)
+      console.timeEnd("GetLastNodeValue")
     } else {
       callback('Event not found', null)
     }
@@ -248,8 +250,10 @@ NodeManager.prototype.getFavoriteNodesLastValue = function (callback) {
 NodeManager.prototype.getNodeValuesById = function(nodeId, startDate, callback) {
   var self = this
   //first we load up the node
+  console.time("getNodeValuesById")
+  console.time("findNode")
   this.findNodeWithId(nodeId, function(node, error){
-
+  console.timeEnd("findNode")
     var result = {}
     result.node = node
 
@@ -264,8 +268,10 @@ NodeManager.prototype.getNodeValuesById = function(nodeId, startDate, callback) 
       var filter = {}
       filter.source = node.address
       filter.timestamp = {"$gte": startDate}
-
-      Event.find(filter).sort({timestamp: 'desc'}).exec(function (err, events) {
+      console.time("findEvents")
+      Event.find(filter).sort({timestamp: 'desc'}).lean(true).exec(function (err, events) {
+        console.timeEnd("findEvents")
+        console.time("mapEvents")
         for (var i = 0; i < events.length; i++) {
           var currentEvent = events[i]
 
@@ -279,7 +285,9 @@ NodeManager.prototype.getNodeValuesById = function(nodeId, startDate, callback) 
 
           result.events.push(transformedEvent)
         }
+        console.timeEnd("mapEvents")
 
+        console.timeEnd("getNodeValuesById")
         callback(result, null)
       })
 
