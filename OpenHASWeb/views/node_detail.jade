@@ -1,9 +1,11 @@
 extends logged_in_layout
 
 block header
-  script(type='text/javascript').
-
   script(src='/javascripts/nodes_ui.js')
+  script(type='text/javascript', src='https://www.gstatic.com/charts/loader.js')
+  script(type='text/javascript').
+    var viewModel = !{JSON.stringify(viewModel)};
+  script(type='text/javascript', src='/javascripts/node_detail_chart.js')
 
 block content
   .row
@@ -15,7 +17,7 @@ block content
           h3.panel-title.clearfix
             div.pull-left #{viewModel.node.nodeName}
             div.pull-right
-              | Current value: #{viewModel.lastValue.toFixed(1)} ℃
+              | Current value: #{viewModel.lastValue} ℃
           div Displayed time range: &nbsp;
             .btn-group
               button(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="true").btn.btn-xs.btn-success.dropdown-toggle #{viewModel.offset} day(s) &nbsp;
@@ -39,12 +41,13 @@ block content
                 th Last measurement
             tbody
               tr
-                td #{viewModel.minValue.toFixed(1)} ℃
-                td #{viewModel.avgValue.toFixed(1)} ℃
-                td #{viewModel.maxValue.toFixed(1)} ℃
+                td #{viewModel.minValue} ℃
+                td #{viewModel.avgValue} ℃
+                td #{viewModel.maxValue} ℃
                 td #{viewModel.count}
                 td #{viewModel.firstTimestamp}
                 td #{viewModel.lastTimestamp}
+          div(id='chart_div')
 
         .panel-footer
           a(href="#") Download dataset

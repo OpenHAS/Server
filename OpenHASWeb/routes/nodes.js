@@ -3,6 +3,8 @@ var router = express.Router();
 var auth = require('../business_logic/authentication_handler')
 var nodeManager = require('../dao/node_manager')
 var NodeTypes = require('../business_logic/node_types')
+var ReportGenerator = require('../business_logic/report_generator')
+var winston = require('winston')
 
 router.get('/', auth.ensureAuthenticated, function(req, res) {
   nodeManager.nodes(function(nodes){
@@ -128,60 +130,89 @@ router.get('/:nodeId/detail', auth.ensureAuthenticatedForDashboard, function (re
   vm.shouldHideTopMenu = !req.isAuthenticated()
 
   var timeSpan = 1
-  if (req.query.offset && req.query.offset <= 365 & req.query.offset >= 1) {
-    timeSpan = req.query.offset
+  if (req.query.offset && isNumeric(req.query.offset) && req.query.offset <= 365 & req.query.offset >= 1) {
+    timeSpan = parseInt(req.query.offset)
   }
-  var startDate = new Date()
-  startDate.setDate(startDate.getDate()-timeSpan)
 
-  console.log("Loading events for node %s since %s",req.params.nodeId, startDate)
+  var yesterday = new Date()
+  yesterday.setDate(yesterday.getDate()-1)
 
-  nodeManager.getNodeValuesById(req.params.nodeId, startDate, function (result, error) {
+  nodeManager.getNodeValuesById(req.params.nodeId, yesterday, function (nodeLookupResult) {
 
-    console.log("Got %s events for node %s since %s", result.events.length, result.node._id, startDate)
+    var nodeReport = ReportGenerator.report[req.params.nodeId]
 
-    vm.offset = timeSpan
-    vm.node = result.node
-    vm.events = result.events
+    if (nodeReport) {
 
-    var min = Number.MAX_VALUE
-    var max = Number.MIN_VALUE
-    var sum = 0
-    var count = 0
-    for (var i = 0; i < result.events.length; i++) {
-      var currentEvent = result.events[i];
+      var result = []
 
-      if (isNumeric(currentEvent.value)) {
-        if (currentEvent.value < min) {
-          min = currentEvent.value
-        }
-
-        if (currentEvent.value > max) {
-          max = currentEvent.value
-        }
-        sum += currentEvent.value
-        count++
+      switch (timeSpan) {
+        case 1:
+          result = nodeLookupResult.events
+          break
+        case 7:
+           result = nodeReport.last7Days
+          break
+        case 30:
+          result = nodeReport.last30Days
+          break
+        case 365:
+          result = nodeReport.last365Days
+          break
+        default:
+          break
       }
+
+      winston.info("Got %s events", result.length)
+
+      vm.offset = timeSpan
+      vm.node = nodeLookupResult.node
+      vm.events = result
+
+      var min = Number.MAX_VALUE
+      var max = Number.MIN_VALUE
+      var sum = 0
+      var count = 0
+      for (var i = 0; i < result.length; i++) {
+        var currentEvent = result[i];
+
+        if (isNumeric(currentEvent.value)) {
+          if (currentEvent.value < min) {
+            min = currentEvent.value
+          }
+
+          if (currentEvent.value > max) {
+            max = currentEvent.value
+          }
+          sum += currentEvent.value
+          count++
+        }
+      }
+
+      vm.minValue = '--'
+      vm.maxValue = '--'
+      vm.avgValue = '--'
+      vm.count = count
+      vm.firstTimestamp = "--"
+      vm.lastTimestamp = "--"
+      vm.lastValue = "--"
+
+      if (result.length > 0) {
+
+        vm.firstTimestamp = new Date(result[0].timestamp).toLocaleString('hu-HU')
+
+        var ts = result[result.length-1].timestamp
+        vm.lastTimestamp = new Date(ts).toLocaleString('hu-HU')
+
+        vm.lastValue = result[0].value.toFixed(1)
+        vm.minValue = min.toFixed(1)
+        vm.maxValue = max.toFixed(1)
+        vm.avgValue = (sum / count).toFixed(1)
+      }
+
+      res.render('node_detail',{viewModel:vm});
+
     }
-
-    vm.minValue = min
-    vm.maxValue = max
-    vm.avgValue = sum / count
-    vm.count = count
-    vm.firstTimestamp = "--"
-    vm.lastTimestamp = "--"
-    vm.lastValue = "--"
-    if (result.events.length > 0) {
-      var ts = result.events[result.events.length-1].timestamp
-      vm.firstTimestamp = new Date(ts).toLocaleString('hu-HU')
-      vm.lastTimestamp = new Date(result.events[0].timestamp).toLocaleString('hu-HU')
-      vm.lastValue = result.events[0].value
-    }
-
-    res.render('node_detail',{viewModel:vm});
-
   })
-
 })
 
 function isNumeric(n) {

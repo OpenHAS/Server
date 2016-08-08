@@ -20,7 +20,6 @@ var ReportGenerator = function () {
   this.limit30Day = 6 * 60 * 60 * 1000 //6 hours integration window for 30 days
   this.limit365Day = 24 * 60 * 60 * 1000 //24 hours integration window for 365 days
 
-
   this.integration7Day = new IntegrationModel(this.limit7Day)
   this.integration30Day = new IntegrationModel(this.limit30Day)
   this.integration365Day = new IntegrationModel(this.limit365Day)
@@ -41,8 +40,16 @@ ReportGenerator.prototype.execute = function() {
 
     winston.info('Need to generate report for %s nodes', nodeList.length)
 
-    var startDate = new Date()
+    var now = new Date()
+
+    var startDate = now
     startDate.setDate(startDate.getDate()-365)
+
+    var startDate7Days = new Date()
+    startDate7Days.setDate(startDate7Days.getDate()-7)
+
+    var startDate30Days = new Date()
+    startDate30Days.setDate(startDate30Days.getDate()-30)
 
     async.each(nodeList,function (currentNode, callback) {
 
@@ -70,9 +77,17 @@ ReportGenerator.prototype.execute = function() {
             //if the value can be processed
             if ( isNumeric(currentEvent.value) ) {
 
-              self.calculateIntegral(currentEvent, self.integration7Day, nodeReport.last7Days)
-              self.calculateIntegral(currentEvent, self.integration30Day, nodeReport.last30Days)
-              self.calculateIntegral(currentEvent, self.integration365Day, nodeReport.last365Days)
+              var forceIntegrate = j == result.events.length-1 // for the last element we force the integration
+
+              if(currentEvent.timestamp.getTime() > startDate7Days.getTime() ) {
+                self.checkIntegralCondition(currentEvent, self.integration7Day, nodeReport.last7Days, forceIntegrate)
+              }
+
+              if(currentEvent.timestamp.getTime() > startDate30Days.getTime() ) {
+                self.checkIntegralCondition(currentEvent, self.integration30Day, nodeReport.last30Days, forceIntegrate)
+              }
+
+              self.checkIntegralCondition(currentEvent, self.integration365Day, nodeReport.last365Days, forceIntegrate)
             }
           }
 
@@ -107,27 +122,38 @@ ReportGenerator.prototype.execute = function() {
   })
 }
 
-ReportGenerator.prototype.calculateIntegral = function(currentEvent, integrationModel, holderArray) {
+ReportGenerator.prototype.checkIntegralCondition = function(currentEvent, integrationModel, holderArray, forceIntegrate) {
 
   //we add it to the variables
   integrationModel.total += currentEvent.value
   integrationModel.count ++
 
-  var diff = Math.abs(integrationModel.lastTimestamp - currentEvent.timestamp.getTime())
+  //if integration is forced, we do it regardless of the time difference. Its used for having the last non-complete integration window in the list as well.
+  if (forceIntegrate) {
+    this.calculateIntegral(currentEvent, integrationModel, holderArray)
+  } else {
 
-  if (diff >= integrationModel.timespan) {
+    var diff = Math.abs(integrationModel.lastTimestamp - currentEvent.timestamp.getTime())
 
-    //if the difference is bigger than the 365 day integration period, we do the avg calculation
-    var sample = {}
-    sample.value = integrationModel.total / integrationModel.count
-    sample.timestamp = currentEvent.timestamp
+    if (diff >= integrationModel.timespan) {
 
-    integrationModel.total = 0
-    integrationModel.count = 0
-    integrationModel.lastTimestamp = currentEvent.timestamp.getTime()
-
-    holderArray.push(sample)
+      //if the difference is bigger than the 365 day integration period, we do the avg calculation
+      this.calculateIntegral(currentEvent, integrationModel, holderArray)
+    }
   }
+}
+
+ReportGenerator.prototype.calculateIntegral = function (currentEvent, integrationModel, holderArray) {
+
+  var sample = {}
+  sample.value = integrationModel.total / integrationModel.count
+  sample.timestamp = currentEvent.timestamp
+
+  integrationModel.total = 0
+  integrationModel.count = 0
+  integrationModel.lastTimestamp = currentEvent.timestamp.getTime()
+
+  holderArray.push(sample)
 }
 
 function isNumeric(n) {

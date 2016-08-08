@@ -269,7 +269,7 @@ NodeManager.prototype.getNodeValuesById = function(nodeId, startDate, callback) 
       filter.source = node.address
       filter.timestamp = {"$gte": startDate}
       console.time("findEvents")
-      Event.find(filter).sort({timestamp: 'desc'}).lean(true).exec(function (err, events) {
+      Event.find(filter).sort({timestamp: 'asc'}).lean(true).exec(function (err, events) {
         console.timeEnd("findEvents")
         console.time("mapEvents")
         for (var i = 0; i < events.length; i++) {
