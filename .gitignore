@@ -34,3 +34,5 @@ node_modules
 .idea
 
 OpenHASWeb/public/template/bower_components
+OpenHASWeb/sslcert/server.cer
+OpenHASWeb/sslcert/server.key

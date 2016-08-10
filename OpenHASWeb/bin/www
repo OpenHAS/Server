@@ -7,7 +7,15 @@
 var app = require('../app');
 var debug = require('debug')('RuleEngineWeb:server');
 var http = require('http');
+var https = require('https');
+var config = require('../config')
+var winston = require('winston')
+winston.remove(winston.transports.Console);
+winston.add(winston.transports.Console, {colorize: true});
 
+var fs = require('fs');
+
+var httpsServer = null
 /**
  * Get port from environment and store in Express.
  */
@@ -26,13 +34,37 @@ var server = http.createServer(app);
  */
 
 server.listen(port);
+
 server.on('error', onError);
 server.on('listening', onListening);
+
+startHTTPSServer()
+
+function startHTTPSServer() {
+
+  try {
+    var privateKey = fs.readFileSync(config.openssl.privatekey);
+    var certificate = fs.readFileSync(config.openssl.certificate);
+    var credentials = {key: privateKey, cert: certificate};
+
+    var httpsPort = normalizePort(process.env.HTTPS_PORT|| '3443')
+
+
+    app.set('httpsPort', httpsPort)
+
+    httpsServer = https.createServer(credentials, app)
+    httpsServer.listen(httpsPort)
+    httpsServer.on('error', onErrorHTTPS);
+    httpsServer.on('listening', onListeningHTTPS);
+  }
+  catch (e) {
+    winston.warn('Missing HTTPS certificate or private key, not starting the HTTPS server')
+  }
+}
 
 /**
  * Normalize a port into a number, string, or false.
  */
-
 function normalizePort(val) {
   var port = parseInt(val, 10);
 
@@ -77,6 +109,30 @@ function onError(error) {
   }
 }
 
+function onErrorHTTPS(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges. HTTPS.');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use. HTTPS.');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
 /**
  * Event listener for HTTP server "listening" event.
  */
@@ -86,5 +142,13 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  winston.warn('Listening on ' + bind);
+}
+
+function onListeningHTTPS() {
+  var addr = httpsServer.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  winston.warn('Listening on ' + bind);
 }
