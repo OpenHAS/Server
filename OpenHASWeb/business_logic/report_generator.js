@@ -15,6 +15,7 @@ var ReportGenerator = function () {
   //schedule the generator to run
   var interval = 60 * 60 * 1000 //every hour
   setInterval(this.execute,interval)
+  winston.info('Report generation scheduled for every %s second', interval/1000)
 
   this.limit7Day = 15 * 60 * 1000 //15 minutes integration window for 7 days
   this.limit30Day = 6 * 60 * 60 * 1000 //6 hours integration window for 30 days
@@ -25,9 +26,6 @@ var ReportGenerator = function () {
   this.integration365Day = new IntegrationModel(this.limit365Day)
 
   this.report = {}
-
-  //also start it
-  this.execute()
 }
 
 ReportGenerator.prototype.execute = function() {

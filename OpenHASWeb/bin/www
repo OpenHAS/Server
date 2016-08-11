@@ -4,14 +4,15 @@
  * Module dependencies.
  */
 
+var winston = require('winston')
+winston.remove(winston.transports.Console);
+winston.add(winston.transports.Console, {colorize: true});
+
 var app = require('../app');
 var debug = require('debug')('RuleEngineWeb:server');
 var http = require('http');
 var https = require('https');
 var config = require('../config')
-var winston = require('winston')
-winston.remove(winston.transports.Console);
-winston.add(winston.transports.Console, {colorize: true});
 
 var fs = require('fs');
 
@@ -58,7 +59,8 @@ function startHTTPSServer() {
     httpsServer.on('listening', onListeningHTTPS);
   }
   catch (e) {
-    winston.warn('Missing HTTPS certificate or private key, not starting the HTTPS server')
+    winston.error('Exception during HTTPS server creation. Maybe the certificate or the private key is missing, not starting the HTTPS server')
+    winston.error('Exception: '+e)
   }
 }
 
