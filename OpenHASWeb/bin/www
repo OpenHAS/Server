@@ -42,14 +42,14 @@ server.on('listening', onListening);
 startHTTPSServer()
 
 function startHTTPSServer() {
-
+  winston.info('Trying to start the HTTPS server')
   try {
     var privateKey = fs.readFileSync(config.openssl.privatekey);
     var certificate = fs.readFileSync(config.openssl.certificate);
     var credentials = {key: privateKey, cert: certificate};
 
     var httpsPort = normalizePort(process.env.HTTPS_PORT|| '3443')
-
+    winston.info('HTTPS server will use port %s', httpsPort)
 
     app.set('httpsPort', httpsPort)
 
@@ -59,8 +59,8 @@ function startHTTPSServer() {
     httpsServer.on('listening', onListeningHTTPS);
   }
   catch (e) {
-    winston.error('Exception during HTTPS server creation. Maybe the certificate or the private key is missing, not starting the HTTPS server')
-    winston.error('Exception: '+e)
+    winston.warn('Exception during HTTPS server creation. Maybe the certificate or the private key is missing, not starting the HTTPS server')
+    winston.warn('Exception: '+e)
   }
 }
 
