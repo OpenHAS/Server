@@ -8,6 +8,7 @@ var session = require('express-session');
 var config = require('./config')
 var winston = require('winston')
 var reportGenerator = require('./business_logic/report_generator')
+var particleClient = require('./business_logic/particle_client')
 
 var mongoose = require('mongoose');
 mongoose.connect(config.mongodb.connectionString);
@@ -18,6 +19,9 @@ db.once('open', function() {
 
   //schedule the report generator
   reportGenerator.execute()
+
+  //connect to particle, subscribe to device events. if no username specified, this will do nothing
+  particleClient.login()
 });
 
 var authProvider = require('./business_logic/authentication_handler')

@@ -4,6 +4,8 @@ var auth = require('../business_logic/authentication_handler')
 var SettingsManager = require('../dao/settings_manager')
 var uuid = require('node-uuid')
 var SlackClient = require('../business_logic/slack_client')
+var ParticleClient = require('../business_logic/particle_client')
+
 var Q = require('q')
 
 router.get('/', auth.ensureAuthenticated, function (req, res) {
@@ -15,9 +17,11 @@ router.get('/', auth.ensureAuthenticated, function (req, res) {
       SettingsManager.getValueDeferred(SettingsManager.ApiToken, ""),
       SettingsManager.getValueDeferred(SettingsManager.ApiEnabled, "false"),
       SettingsManager.getValueDeferred(SettingsManager.AnonymousDashboardAccess, "false"),
-      SettingsManager.getValueDeferred(SettingsManager.SlackToken, "")
+      SettingsManager.getValueDeferred(SettingsManager.SlackToken, ""),
+      SettingsManager.getValueDeferred(SettingsManager.ParticleUsername, ""),
+      SettingsManager.getValueDeferred(SettingsManager.ParticlePassword, "")
     ])
-    .spread(function(mqtt_username, mqtt_password, api_token, api_enabled, anon_access_enabled, slack_token){
+    .spread(function(mqtt_username, mqtt_password, api_token, api_enabled, anon_access_enabled, slack_token, particle_username, particle_password){
       var vm = {}
 
       vm.mqtt_username = mqtt_username
@@ -28,6 +32,8 @@ router.get('/', auth.ensureAuthenticated, function (req, res) {
       vm.api_access_enabled = api_enabled == 'true'
       vm.anonymous_dashboard_access = anon_access_enabled == 'true'
       vm.slack_token = slack_token
+      vm.particle_username = particle_username
+      vm.particle_password = particle_password
 
       res.render('settings', {viewModel: vm})
     })
@@ -50,6 +56,16 @@ router.post('/slack', auth.ensureAuthenticated, function (req, res) {
   })
 
 })
+router.post('/particle', auth.ensureAuthenticated, function (req, res) {
+
+  SettingsManager.setValue(SettingsManager.ParticleUsername, req.body.particle_username, function (err, savedUser) {
+    SettingsManager.setValue(SettingsManager.ParticlePassword, req.body.particle_password, function (err, savedPassword) {
+      ParticleClient.login()
+      res.redirect('/settings')
+    })
+  })
+})
+
 
 router.get('/:settingsKey/value', auth.ensureAuthenticated, function (req, res) {
 

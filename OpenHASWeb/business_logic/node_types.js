@@ -35,4 +35,19 @@ DoubleRelayActuator.prototype.setRelay2State = function(state) {
   return "SetRelayState,1,"+Number(state)
 }
 
-module.exports = [new TemperatureSensor(), new DoubleRelayActuator()]
+var ParticleTempSensor = function() {
+  this.name = "Particle DS18B20 Temp Sensor"
+  this.getters = ['getTemperature']
+  this.setters = []
+}
+
+ParticleTempSensor.prototype.getTemperature = function (event, calibrationFactor) {
+
+  if (calibrationFactor != undefined) {
+    return Number(event.parameters[1]) + calibrationFactor
+  } else {
+    return Number(event.parameters[1])
+  }
+}
+
+module.exports = [new TemperatureSensor(), new DoubleRelayActuator(), new ParticleTempSensor()]

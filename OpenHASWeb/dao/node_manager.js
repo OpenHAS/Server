@@ -250,10 +250,10 @@ NodeManager.prototype.getFavoriteNodesLastValue = function (callback) {
 NodeManager.prototype.getNodeValuesById = function(nodeId, startDate, callback) {
   var self = this
   //first we load up the node
-  console.time("getNodeValuesById")
-  console.time("findNode")
+  //console.time("getNodeValuesById")
+  //console.time("findNode")
   this.findNodeWithId(nodeId, function(node, error){
-  console.timeEnd("findNode")
+  //console.timeEnd("findNode")
     var result = {}
     result.node = node
 
@@ -268,10 +268,10 @@ NodeManager.prototype.getNodeValuesById = function(nodeId, startDate, callback) 
       var filter = {}
       filter.source = node.address
       filter.timestamp = {"$gte": startDate}
-      console.time("findEvents")
+      //console.time("findEvents")
       Event.find(filter).sort({timestamp: 'asc'}).lean(true).exec(function (err, events) {
-        console.timeEnd("findEvents")
-        console.time("mapEvents")
+        //console.timeEnd("findEvents")
+        //console.time("mapEvents")
         for (var i = 0; i < events.length; i++) {
           var currentEvent = events[i]
 
@@ -285,9 +285,9 @@ NodeManager.prototype.getNodeValuesById = function(nodeId, startDate, callback) 
 
           result.events.push(transformedEvent)
         }
-        console.timeEnd("mapEvents")
+        //console.timeEnd("mapEvents")
 
-        console.timeEnd("getNodeValuesById")
+        //console.timeEnd("getNodeValuesById")
         callback(result, null)
       })
 

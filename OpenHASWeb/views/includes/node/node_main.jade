@@ -3,6 +3,8 @@ case currentNode.nodeType
     include node_main_input
   when 'OHDoubleRelayActuator'
     include node_main_output
+  when 'Particle DS18B20 Temp Sensor'
+    include node_main_input
   default
     .col-lg-3.col-md-6
       .panel.panel-red

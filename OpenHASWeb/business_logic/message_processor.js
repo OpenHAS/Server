@@ -33,7 +33,7 @@ MessageProcessor.prototype.handleError = function(error) {
 }
 
 MessageProcessor.prototype.processStatusMessage = function(message) {
-  var parsedEvent = this.eventManager.parseEvent(message.toString())
+  var parsedEvent = this.eventManager.parseMQTTEvent(message.toString())
   if (parsedEvent) {
     this.eventManager.saveEvent(parsedEvent)
   }

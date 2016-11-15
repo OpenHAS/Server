@@ -10,6 +10,8 @@ var SettingsManager = function(){
   this.ApiEnabled = 'api_enabled'
   this.AnonymousDashboardAccess = 'anonymous_dashboard_access'
   this.SlackToken = 'slack_token'
+  this.ParticleUsername = 'particleUser'
+  this.ParticlePassword = 'particlePassword'
 }
 
 SettingsManager.prototype.setValue = function(key, value, callback) {

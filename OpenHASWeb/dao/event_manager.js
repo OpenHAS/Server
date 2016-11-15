@@ -7,7 +7,7 @@ var NodeManager = require('./node_manager')
 
 var EventManager = function(){}
 
-EventManager.prototype.parseEvent = function(eventAsString) {
+EventManager.prototype.parseMQTTEvent = function(eventAsString) {
 
   var elements = eventAsString.split(',')
   var newEvent = null
@@ -23,28 +23,26 @@ EventManager.prototype.parseEvent = function(eventAsString) {
   } else {
     winston.error('Unknown event, cannot parse: %s', eventAsString)
   }
-
   return newEvent
+}
 
+EventManager.prototype.parseParticleEvent = function (particleEventObject) {
+
+  var newEvent = null
+  //we are only able to process temperature events at this point. Its a terrible solution, I know
+  if (particleEventObject.name == "Temperature") {
+    newEvent = new Event()
+    newEvent.source = 'PARTICLE:' + particleEventObject.coreid
+    newEvent.timestamp = new Date()
+    var dataElements = particleEventObject.data.split(':')
+    newEvent.parameters.push(dataElements[0]) // temp sensor address
+    newEvent.parameters.push(dataElements[1]) // measured temperature
+  }
+  return newEvent
 }
 
 EventManager.prototype.saveEvent = function(event, callback) {
 
-  //save the event under each node
-  // Node.find({address : event.source}, function (error, nodes) {
-  //   for (var index = 0; index < nodes.length; index++) {
-  //     var currentNode = nodes[index]
-  //
-  //     currentNode.events.push(event)
-  //     currentNode.save(function(error, savedNode) {
-  //       if (error) {
-  //         winston.error('Error saving an event to its parent node:', error)
-  //       }
-  //     })
-  //   }
-  // })
-
-  //but also save it to the event store
   event.save(function(error,savedEvent){
     if (error) {
       winston.error('Error saving event to the event store:', error)
