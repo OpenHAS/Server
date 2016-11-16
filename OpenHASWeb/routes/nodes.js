@@ -203,7 +203,7 @@ router.get('/:nodeId/detail', auth.ensureAuthenticatedForDashboard, function (re
         var ts = result[result.length-1].timestamp
         vm.lastTimestamp = new Date(ts).toLocaleString('hu-HU')
 
-        vm.lastValue = result[0].value.toFixed(1)
+        vm.lastValue = result[result.length-1].value.toFixed(1)
         vm.minValue = min.toFixed(1)
         vm.maxValue = max.toFixed(1)
         vm.avgValue = (sum / count).toFixed(1)
