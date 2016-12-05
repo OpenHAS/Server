@@ -89,21 +89,21 @@ block content
     .form-group
       label.col-sm-3.control-label Web user
       .col-sm-6
-        input.form-control(name='web_username', type='text', value='#{viewModel.web_username}')
+        input.form-control(name='web_username', type='text', value='#{viewModel.web_username}', disabled)
 
     .form-group
       label.col-sm-3.control-label Web password
       .col-sm-6
-        input.form-control(name='web_password', type='password', value='#{viewModel.web_password}')
+        input.form-control(name='web_password', type='text', value='#{viewModel.web_password}',disabled)
 
     .form-group
       label.col-sm-3.control-label Anonymous dashboard access
       .col-sm-6
         input.switch(name='anonymous_dashboard_access', type='checkbox', data-state='#{viewModel.anonymous_dashboard_access}' )
 
-    .form-group
-      .col-sm-offset-3.col-sm-10
-        button.btn.btn-primary(type='submit') Save web settings
+    //.form-group
+    //  .col-sm-offset-3.col-sm-10
+    //    button.btn.btn-primary(type='submit') Save web settings
 
   form.form-horizontal()
     .col-sm-4
