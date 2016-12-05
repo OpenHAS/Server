@@ -19,9 +19,10 @@ router.get('/', auth.ensureAuthenticated, function (req, res) {
       SettingsManager.getValueDeferred(SettingsManager.AnonymousDashboardAccess, "false"),
       SettingsManager.getValueDeferred(SettingsManager.SlackToken, ""),
       SettingsManager.getValueDeferred(SettingsManager.ParticleUsername, ""),
-      SettingsManager.getValueDeferred(SettingsManager.ParticlePassword, "")
+      SettingsManager.getValueDeferred(SettingsManager.ParticlePassword, ""),
+      SettingsManager.getValueDeferred(SettingsManager.SensorMapEnabled, "false")
     ])
-    .spread(function(mqtt_username, mqtt_password, api_token, api_enabled, anon_access_enabled, slack_token, particle_username, particle_password){
+    .spread(function(mqtt_username, mqtt_password, api_token, api_enabled, anon_access_enabled, slack_token, particle_username, particle_password, sensor_map_enabled){
       var vm = {}
 
       vm.mqtt_username = mqtt_username
@@ -34,6 +35,7 @@ router.get('/', auth.ensureAuthenticated, function (req, res) {
       vm.slack_token = slack_token
       vm.particle_username = particle_username
       vm.particle_password = particle_password
+      vm.sensor_map_enabled = sensor_map_enabled == 'true'
 
       res.render('settings', {viewModel: vm})
     })

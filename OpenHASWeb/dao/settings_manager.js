@@ -12,6 +12,7 @@ var SettingsManager = function(){
   this.SlackToken = 'slack_token'
   this.ParticleUsername = 'particleUser'
   this.ParticlePassword = 'particlePassword'
+  this.SensorMapEnabled = 'sensor_map_enabled'
 }
 
 SettingsManager.prototype.setValue = function(key, value, callback) {

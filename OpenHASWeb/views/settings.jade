@@ -105,4 +105,14 @@ block content
       .col-sm-offset-3.col-sm-10
         button.btn.btn-primary(type='submit') Save web settings
 
+  form.form-horizontal()
+    .col-sm-4
+      span.help-block Show or hide the sensor map image on the dashboard. The file must be saved to /public/images/temperature_sensor_map_web.png
+    .row
 
+    .form-group
+      label.col-sm-3.control-label Sensor map visible
+      .col-sm-6
+        .checkbox
+          label
+            input.switch(name='sensor_map_enabled', type='checkbox', data-state='#{viewModel.sensor_map_enabled}')
