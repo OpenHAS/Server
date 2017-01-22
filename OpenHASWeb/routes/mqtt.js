@@ -1,14 +1,14 @@
 var express = require('express');
 var router = express.Router();
 var SettingsManager = require('../dao/settings_manager')
-var uuid = require('node-uuid')
+var uuidV4 = require('uuid/v4')
 
 router.post('/auth', function(req, res) {
   var username = req.body.username
   var password = req.body.password
 
-  SettingsManager.getValue(SettingsManager.MosquittoUser,uuid.v4(),function(savedUser){
-    SettingsManager.getValue(SettingsManager.MosquittoPassword,uuid.v4(),function(savedPassword){
+  SettingsManager.getValue(SettingsManager.MosquittoUser,uuidV4(),function(savedUser){
+    SettingsManager.getValue(SettingsManager.MosquittoPassword,uuidV4(),function(savedPassword){
       if (savedUser == username && savedPassword == password) {
         res.sendStatus(200)
       } else {

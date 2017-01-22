@@ -1,6 +1,7 @@
 var config = {}
 
 config.mongodb = {}
+//database is the alias of the docker container where mongoDB is running
 config.mongodb.connectionString = process.env.MONGODB || "mongodb://database/ruleengine"
 
 config.mqtt = {}

@@ -75,7 +75,7 @@ block content
       .col-sm-offset-3.col-sm-10
         button.btn.btn-primary(onclick='regenerate_particle_token()', type='button') Regenerate Particle token
 
-  form.form-horizontal(method='POST')
+  form.form-horizontal(method='POST', action='/settings/update_web_password')
 
     .col-sm-4
       span.help-block Here you can set the username and password which can be used to access the web interface. You can also let users to see the dashboard without authentication.
@@ -89,16 +89,17 @@ block content
     .form-group
       label.col-sm-3.control-label Web password
       .col-sm-6
-        input.form-control(name='web_password', type='text', value='#{viewModel.web_password}',disabled)
+        input.form-control(name='web_password', type='text', value='#{viewModel.web_password}')
+
+    .form-group
+      .col-sm-offset-3.col-sm-10
+        button.btn.btn-primary(type='submit') Update password
 
     .form-group
       label.col-sm-3.control-label Anonymous dashboard access
       .col-sm-6
         input.switch(name='anonymous_dashboard_access', type='checkbox', data-state='#{viewModel.anonymous_dashboard_access}' )
 
-    //.form-group
-    //  .col-sm-offset-3.col-sm-10
-    //    button.btn.btn-primary(type='submit') Save web settings
 
   form.form-horizontal()
     .col-sm-4

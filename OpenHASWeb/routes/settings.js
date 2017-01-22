@@ -2,16 +2,19 @@ var express = require('express');
 var router = express.Router();
 var auth = require('../business_logic/authentication_handler')
 var SettingsManager = require('../dao/settings_manager')
-var uuid = require('node-uuid')
+var uuidV4 = require('uuid/v4')
 var SlackClient = require('../business_logic/slack_client')
-var ParticleClient = require('../business_logic/particle_client')
+var UserManager = require('../dao/user_manager')
 
 var Q = require('q')
+
+var ADMIN_USER_NAME = 'admin'
 
 router.get('/', auth.ensureAuthenticated, function (req, res) {
 
   Q.all(
     [
+      UserManager.getUserDeferred(ADMIN_USER_NAME),
       SettingsManager.getValueDeferred(SettingsManager.MosquittoUser,""),
       SettingsManager.getValueDeferred(SettingsManager.MosquittoPassword, ""),
       SettingsManager.getValueDeferred(SettingsManager.ApiToken, ""),
@@ -21,13 +24,13 @@ router.get('/', auth.ensureAuthenticated, function (req, res) {
       SettingsManager.getValueDeferred(SettingsManager.ParticleSecurityToken, ""),
       SettingsManager.getValueDeferred(SettingsManager.SensorMapEnabled, "false")
     ])
-    .spread(function(mqtt_username, mqtt_password, api_token, api_enabled, anon_access_enabled, slack_token, particle_token, sensor_map_enabled){
+    .spread(function(foundUser, mqtt_username, mqtt_password, api_token, api_enabled, anon_access_enabled, slack_token, particle_token, sensor_map_enabled){
       var vm = {}
 
       vm.mqtt_username = mqtt_username
       vm.mqtt_password = mqtt_password
-      vm.web_username = 'admin'
-      vm.web_password = 'admin'
+      vm.web_username = foundUser.username
+      vm.web_password = foundUser.password
       vm.api_token = api_token
       vm.api_access_enabled = api_enabled == 'true'
       vm.anonymous_dashboard_access = anon_access_enabled == 'true'
@@ -74,17 +77,25 @@ router.post('/:settingsKey/value', auth.ensureAuthenticated, function (req, res)
 })
 
 router.post('/regenerate_api_token', auth.ensureAuthenticated, function (req, res) {
-  var newToken = uuid.v4()
+  var newToken = uuidV4()
   SettingsManager.setValue(SettingsManager.ApiToken, newToken, function (err, setting) {
     res.send({api_token: newToken})
   })
 })
 
 router.post('/regenerate_particle_token', auth.ensureAuthenticated, function (req, res) {
-  var newToken = uuid.v4()
+  var newToken = uuidV4()
   SettingsManager.setValue(SettingsManager.ParticleSecurityToken, newToken, function (err, setting) {
     res.send({particle_token: newToken})
   })
+})
+
+router.post('/update_web_password', auth.ensureAuthenticated, function (req, res) {
+
+  UserManager.updatePassword(ADMIN_USER_NAME, req.body.web_password, function () {
+    res.redirect('/auth/logout')
+  })
+
 })
 
 module.exports = router
