@@ -37,6 +37,8 @@ EventManager.prototype.parseParticleEvent = function (particleEventObject) {
     var dataElements = particleEventObject.data.split(':')
     newEvent.parameters.push(dataElements[0]) // temp sensor address
     newEvent.parameters.push(dataElements[1]) // measured temperature
+  } else {
+    winston.warn('Cannot parse event: %s', particleEventObject.name)
   }
   return newEvent
 }

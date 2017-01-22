@@ -55,6 +55,7 @@ var route_rules = require('./routes/rules')
 var route_nodes = require('./routes/nodes')
 var route_settings = require('./routes/settings')
 var route_variables = require('./routes/variables')
+var route_ingestion_particle = require('./routes/ingest/particle')
 
 app.use('/', route_index)
 app.use('/auth', route_auth)
@@ -63,6 +64,7 @@ app.use('/rules', route_rules)
 app.use('/nodes', route_nodes)
 app.use('/settings', route_settings)
 app.use('/variables', route_variables)
+app.use('/ingest/particle', route_ingestion_particle)
 
 
 // catch 404 and forward to error handler

@@ -18,11 +18,10 @@ router.get('/', auth.ensureAuthenticated, function (req, res) {
       SettingsManager.getValueDeferred(SettingsManager.ApiEnabled, "false"),
       SettingsManager.getValueDeferred(SettingsManager.AnonymousDashboardAccess, "false"),
       SettingsManager.getValueDeferred(SettingsManager.SlackToken, ""),
-      SettingsManager.getValueDeferred(SettingsManager.ParticleUsername, ""),
-      SettingsManager.getValueDeferred(SettingsManager.ParticlePassword, ""),
+      SettingsManager.getValueDeferred(SettingsManager.ParticleSecurityToken, ""),
       SettingsManager.getValueDeferred(SettingsManager.SensorMapEnabled, "false")
     ])
-    .spread(function(mqtt_username, mqtt_password, api_token, api_enabled, anon_access_enabled, slack_token, particle_username, particle_password, sensor_map_enabled){
+    .spread(function(mqtt_username, mqtt_password, api_token, api_enabled, anon_access_enabled, slack_token, particle_token, sensor_map_enabled){
       var vm = {}
 
       vm.mqtt_username = mqtt_username
@@ -33,8 +32,7 @@ router.get('/', auth.ensureAuthenticated, function (req, res) {
       vm.api_access_enabled = api_enabled == 'true'
       vm.anonymous_dashboard_access = anon_access_enabled == 'true'
       vm.slack_token = slack_token
-      vm.particle_username = particle_username
-      vm.particle_password = particle_password
+      vm.particle_token = particle_token
       vm.sensor_map_enabled = sensor_map_enabled == 'true'
 
       res.render('settings', {viewModel: vm})
@@ -58,16 +56,6 @@ router.post('/slack', auth.ensureAuthenticated, function (req, res) {
   })
 
 })
-router.post('/particle', auth.ensureAuthenticated, function (req, res) {
-
-  SettingsManager.setValue(SettingsManager.ParticleUsername, req.body.particle_username, function (err, savedUser) {
-    SettingsManager.setValue(SettingsManager.ParticlePassword, req.body.particle_password, function (err, savedPassword) {
-      ParticleClient.login()
-      res.redirect('/settings')
-    })
-  })
-})
-
 
 router.get('/:settingsKey/value', auth.ensureAuthenticated, function (req, res) {
 
@@ -89,6 +77,13 @@ router.post('/regenerate_api_token', auth.ensureAuthenticated, function (req, re
   var newToken = uuid.v4()
   SettingsManager.setValue(SettingsManager.ApiToken, newToken, function (err, setting) {
     res.send({api_token: newToken})
+  })
+})
+
+router.post('/regenerate_particle_token', auth.ensureAuthenticated, function (req, res) {
+  var newToken = uuid.v4()
+  SettingsManager.setValue(SettingsManager.ParticleSecurityToken, newToken, function (err, setting) {
+    res.send({particle_token: newToken})
   })
 })
 

@@ -61,24 +61,19 @@ block content
       .col-sm-offset-3.col-sm-10
         button.btn.btn-primary(type='submit') Save Slack token
 
-  form.form-horizontal(method='POST',action='/settings/particle')
+  form.form-horizontal(method='POST',action='/settings/regenerate_particle_token')
     .col-sm-4
-      span.help-block Connect to Particle Cloud. If you don't want to, leave the fields empty. The system will receive all "publish" messages from your cores, but only store those which are sent by registered nodes. Node address format is particle:"coreID"
+      span.help-block Ingest sensor data coming from Particle sensors. This is implemented via webhooks. Node address format is particle:"coreID"
     .row
 
     .form-group
-      label.col-sm-3.control-label Particle username
+      label.col-sm-3.control-label Particle token
       .col-sm-6
-        input.form-control(name='particle_username', type='text', value='#{viewModel.particle_username}')
-
-    .form-group
-      label.col-sm-3.control-label Particle password
-      .col-sm-6
-        input.form-control(name='particle_password', type='text', value='#{viewModel.particle_password}')
+        input.form-control(name='particle_token', type='text', value='#{viewModel.particle_token}', disabled)
 
     .form-group
       .col-sm-offset-3.col-sm-10
-        button.btn.btn-primary(type='submit') Save Particle settings
+        button.btn.btn-primary(onclick='regenerate_particle_token()', type='button') Regenerate Particle token
 
   form.form-horizontal(method='POST')
 

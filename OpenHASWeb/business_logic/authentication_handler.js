@@ -48,4 +48,25 @@ passport.ensureAuthenticatedForDashboard = function (req, res, next) {
   }
 };
 
+//this method should check if the request is coming from particle, and having the correct token
+passport.ensureAuthenticatedForParticle = function(req, res, next) {
+
+  var sentToken = req.get('Authentication')
+
+  //no token was sent
+  if (sentToken == undefined) {
+    res.sendStatus(403)
+    return
+  }
+
+  //compare to saved token
+  SettingsManager.getValue(SettingsManager.ParticleSecurityToken, "", function (savedParticleToken) {
+    if (savedParticleToken == sentToken) {
+      return next()
+    } else {
+      res.sendStatus(403)
+    }
+  })
+}
+
 module.exports = passport;

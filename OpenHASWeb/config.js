@@ -1,7 +1,7 @@
 var config = {}
 
 config.mongodb = {}
-config.mongodb.connectionString = process.env.MONGODB || "mongodb://localhost/ruleengine"
+config.mongodb.connectionString = process.env.MONGODB || "mongodb://database/ruleengine"
 
 config.mqtt = {}
 config.mqtt.host = process.env.MQTT_HOST

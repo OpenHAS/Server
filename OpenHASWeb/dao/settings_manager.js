@@ -13,6 +13,7 @@ var SettingsManager = function(){
   this.ParticleUsername = 'particleUser'
   this.ParticlePassword = 'particlePassword'
   this.SensorMapEnabled = 'sensor_map_enabled'
+  this.ParticleSecurityToken = 'ParticleSecurityToken'
 }
 
 SettingsManager.prototype.setValue = function(key, value, callback) {

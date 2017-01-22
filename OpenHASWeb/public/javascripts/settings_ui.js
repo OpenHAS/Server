@@ -21,3 +21,9 @@ function regenerate_api_token() {
     $('input[name="api_token"]').val(response.api_token)
   })
 }
+
+function regenerate_particle_token() {
+  $.post('/settings/regenerate_particle_token', function (response) {
+    $('input[name="particle_token"]').val(response.particle_token)
+  })
+}
