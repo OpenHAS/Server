@@ -55,6 +55,7 @@ var route_nodes = require('./routes/nodes')
 var route_settings = require('./routes/settings')
 var route_variables = require('./routes/variables')
 var route_ingestion_particle = require('./routes/ingest/particle')
+var route_ingestion_aws_sns = require('./routes/ingest/aws_sns')
 
 app.use('/', route_index)
 app.use('/auth', route_auth)
@@ -64,6 +65,7 @@ app.use('/nodes', route_nodes)
 app.use('/settings', route_settings)
 app.use('/variables', route_variables)
 app.use('/ingest/particle', route_ingestion_particle)
+app.use('/ingest/aws_sns', route_ingestion_aws_sns)
 
 
 // catch 404 and forward to error handler

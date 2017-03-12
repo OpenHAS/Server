@@ -2,6 +2,7 @@ var winston = require('winston')
 var nodeManager = require('../dao/node_manager')
 var async = require('async')
 var Table = require('easy-table')
+var Helper = require('./helper')
 
 var IntegrationModel = function (limit) {
   this.total = 0
@@ -73,7 +74,7 @@ ReportGenerator.prototype.execute = function() {
             var currentEvent = result.events[j];
 
             //if the value can be processed
-            if ( isNumeric(currentEvent.value) ) {
+            if ( Helper.isNumeric(currentEvent.value) ) {
 
               var forceIntegrate = j == result.events.length-1 // for the last element we force the integration
 
@@ -152,10 +153,6 @@ ReportGenerator.prototype.calculateIntegral = function (currentEvent, integratio
   integrationModel.lastTimestamp = currentEvent.timestamp.getTime()
 
   holderArray.push(sample)
-}
-
-function isNumeric(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
 module.exports = new ReportGenerator()

@@ -2,3 +2,4 @@
 node_modules
 public/template/bower_components
 sslcert
+docker_deploy.sh

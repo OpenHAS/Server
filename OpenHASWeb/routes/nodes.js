@@ -5,6 +5,7 @@ var nodeManager = require('../dao/node_manager')
 var NodeTypes = require('../business_logic/node_types')
 var ReportGenerator = require('../business_logic/report_generator')
 var winston = require('winston')
+var Helper = require('../business_logic/helper')
 
 router.get('/', auth.ensureAuthenticated, function(req, res) {
   nodeManager.nodes(function(nodes){
@@ -26,6 +27,8 @@ router.get('/new', auth.ensureAuthenticated, function(req, res) {
   vm.nodeTypes = NodeTypes
   vm.getterFunction = NodeTypes[0].getters[0]
   vm.calibrationFactor = 0
+  vm.lowerLimit = ''
+  vm.upperLimit = ''
 
   res.render('node_editor',{viewModel:vm});
 });
@@ -39,6 +42,18 @@ router.post('/new', auth.ensureAuthenticated, function(req, res) {
   nodeObject.favourite = req.body.favourite == 'on'
   nodeObject.getterFunction = req.body.getterFunction
   nodeObject.setterFunction = req.body.setterFunction
+
+  if (Helper.isNumeric(req.body.lowerLimit)) {
+    nodeObject.lowerLimit = req.body.lowerLimit
+  } else {
+    nodeObject.lowerLimit = undefined
+  }
+
+  if (Helper.isNumeric(req.body.upperLimit)) {
+    nodeObject.upperLimit = req.body.upperLimit
+  } else {
+    nodeObject.upperLimit = undefined
+  }
 
   var cf = req.body.calibrationFactor
   if (cf != '' && cf != 0) {
@@ -68,6 +83,22 @@ router.get('/:nodeId/edit', auth.ensureAuthenticated, function(req, res) {
       vm.nodeTypes = NodeTypes
       vm.getterFunction = foundNode.getterFunction
       vm.setterFunction = foundNode.setterFunction
+
+      vm.lowerLimit = foundNode.lowerLimit
+      vm.upperLimit = foundNode.upperLimit
+
+      if (Helper.isNumeric(foundNode.lowerLimit)) {
+        vm.lowerLimit = foundNode.lowerLimit
+      } else {
+        vm.lowerLimit = ''
+      }
+
+      if (Helper.isNumeric(foundNode.upperLimit)) {
+        vm.upperLimit = foundNode.upperLimit
+      } else {
+        vm.upperLimit = ''
+      }
+
       if (foundNode.calibrationFactor != undefined) {
         vm.calibrationFactor = foundNode.calibrationFactor
       } else {
@@ -90,6 +121,8 @@ router.post('/:nodeId/edit', auth.ensureAuthenticated, function(req, res) {
   nodeObject.nodeType = req.body.nodeType
   nodeObject.getterFunction = req.body.getterFunction
   nodeObject.setterFunction = req.body.setterFunction
+  nodeObject.lowerLimit = req.body.lowerLimit
+  nodeObject.upperLimit = req.body.upperLimit
 
   var cf = req.body.calibrationFactor
   if (cf != '' && cf != 0) {
@@ -130,7 +163,7 @@ router.get('/:nodeId/detail', auth.ensureAuthenticatedForDashboard, function (re
   vm.shouldHideTopMenu = !req.isAuthenticated()
 
   var timeSpan = 1
-  if (req.query.offset && isNumeric(req.query.offset) && req.query.offset <= 365 & req.query.offset >= 1) {
+  if (req.query.offset && Helper.isNumeric(req.query.offset) && req.query.offset <= 365 & req.query.offset >= 1) {
     timeSpan = parseInt(req.query.offset)
   }
 
@@ -175,7 +208,7 @@ router.get('/:nodeId/detail', auth.ensureAuthenticatedForDashboard, function (re
       for (var i = 0; i < result.length; i++) {
         var currentEvent = result[i];
 
-        if (isNumeric(currentEvent.value)) {
+        if (Helper.isNumeric(currentEvent.value)) {
           if (currentEvent.value < min) {
             min = currentEvent.value
           }
@@ -214,9 +247,5 @@ router.get('/:nodeId/detail', auth.ensureAuthenticatedForDashboard, function (re
     }
   })
 })
-
-function isNumeric(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
-}
 
 module.exports = router

@@ -10,7 +10,9 @@ var Node = new Schema({
   getterFunction : String,
   setterFunction : String,
   events : [Event.Schema],
-  calibrationFactor : Number
+  calibrationFactor : Number,
+  lowerLimit : {type:Number, default: undefined},
+  upperLimit : {type:Number, default: undefined}
 })
 
 var NodeModel = mongoose.model('Node', Node);

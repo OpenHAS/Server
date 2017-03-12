@@ -3,7 +3,7 @@ var mongoose = require('mongoose')
 var winston = require('winston')
 var Node = require('./models/node').Model
 var Event = require('./models/event').Model
-
+var Helper = require('../business_logic/helper')
 var MessageProcessor = require('../business_logic/message_processor')
 var NodeTypes = require('../business_logic/node_types')
 
@@ -34,6 +34,18 @@ NodeManager.prototype.addNode = function(nodeObject, callback) {
   newNode.setterFunction = nodeObject.setterFunction
   newNode.calibrationFactor = nodeObject.calibrationFactor
 
+  if(Helper.isNumeric(nodeObject.lowerLimit)) {
+    newNode.lowerLimit = nodeObject.lowerLimit
+  } else {
+    newNode.lowerLimit = undefined;
+  }
+
+  if(Helper.isNumeric(nodeObject.upperLimit)) {
+    newNode.upperLimit = nodeObject.upperLimit
+  } else {
+    newNode.upperLimit = undefined;
+  }
+
   newNode.save(function(err, savedNode){
 
     if (err) {
@@ -60,6 +72,18 @@ NodeManager.prototype.modify = function(nodeId, nodeObject, callback) {
       foundNode.getterFunction = nodeObject.getterFunction
       foundNode.setterFunction = nodeObject.setterFunction
       foundNode.calibrationFactor = nodeObject.calibrationFactor
+
+      if(Helper.isNumeric(nodeObject.lowerLimit)) {
+        foundNode.lowerLimit = nodeObject.lowerLimit
+      } else {
+        foundNode.lowerLimit = undefined;
+      }
+
+      if(Helper.isNumeric(nodeObject.upperLimit)) {
+        foundNode.upperLimit = nodeObject.upperLimit
+      } else {
+        foundNode.upperLimit = undefined;
+      }
 
       foundNode.save(function (err) {
 
