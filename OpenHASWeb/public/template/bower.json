@@ -37,6 +37,9 @@
     "datatables-responsive": "~1.0.3",
     "bootstrap-social": "~4.8.0",
     "flot.tooltip": "~0.8.4",
-    "bootstrap-switch" : "~3.3.2"
+    "bootstrap-switch": "~3.3.2"
+  },
+  "resolutions": {
+    "jquery": ">= 2.1.0"
   }
 }
